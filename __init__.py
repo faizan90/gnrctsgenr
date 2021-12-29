@@ -14,8 +14,6 @@ os.environ[str('MKL_NUM_THREADS')] = str(1)
 os.environ[str('NUMEXPR_NUM_THREADS')] = str(1)
 os.environ[str('OMP_NUM_THREADS')] = str(1)
 
-from .core.ea_main import GenericTimeSeriesGenerator
-
 from .core import (
     GTGBase,
     GTGData,
