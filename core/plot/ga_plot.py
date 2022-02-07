@@ -240,6 +240,8 @@ class GenericTimeSeriesGeneratorPlot:
                     (self._plot_cmpr_cross_cmpos_ft, ('asymm_2',)),
                     (self._plot_cmpr_cross_cmpos_ft, ('etpy',)),
                     (self._plot_cmpr_nD_vars, []),
+                    (self._plot_cmpr_data_ms_ft, []),
+                    (self._plot_cmpr_probs_ms_ft, []),
                     ])
 
             else:

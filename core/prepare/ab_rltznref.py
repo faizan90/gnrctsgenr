@@ -54,4 +54,7 @@ class GTGPrepareRltznRef(GTGRG):
         self.mult_asymm_1_cmpos_ft_dict = None
         self.mult_asymm_2_cmpos_ft_dict = None
         self.mult_etpy_cmpos_ft_dict = None
+
+        self.data_ms_ft_norm_val = None
+        self.probs_ms_ft_norm_val = None
         return

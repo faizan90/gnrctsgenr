@@ -1489,6 +1489,30 @@ class GTGAlgObjective:
 
         return obj_val
 
+    def _get_obj_data_ms_ft_val(self):
+
+        obj_val = (
+            (self._rr.data_ms_ft - self._rs.data_ms_ft
+             ) ** self._alg_cnsts_diffs_exp).sum()
+
+        # So that we don't accidentally use it.
+        if self._alg_done_opt_flag:
+            obj_val = np.nan
+
+        return obj_val
+
+    def _get_obj_probs_ms_ft_val(self):
+
+        obj_val = (
+            (self._rr.probs_ms_ft - self._rs.probs_ms_ft
+             ) ** self._alg_cnsts_diffs_exp).sum()
+
+        # So that we don't accidentally use it.
+        if self._alg_done_opt_flag:
+            obj_val = np.nan
+
+        return obj_val
+
     def _get_penalized_probs(self, ref_probs, sim_probs):
 
         if self._sett_cdf_pnlt_set_flag:
@@ -1584,6 +1608,12 @@ class GTGAlgObjective:
 
         if self._sett_obj_etpy_ms_flag:
             obj_vals.append(self._get_obj_ecop_etpy_ms_val())
+
+        if self._sett_obj_match_data_ms_ft_flag:
+            obj_vals.append(self._get_obj_data_ms_ft_val())
+
+        if self._sett_obj_match_probs_ms_ft_flag:
+            obj_vals.append(self._get_obj_probs_ms_ft_val())
 
         obj_vals = np.array(obj_vals, dtype=np.float64)
 

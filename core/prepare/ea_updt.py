@@ -488,6 +488,30 @@ class GTGPrepareUpdate:
         else:
             ecop_etpy_ms = None
 
+        if self._sett_obj_match_data_ms_ft_flag:
+            if vtype == 'sim':
+                data_ms_ft_norm_val = self._rr.data_ms_ft_norm_val
+
+            else:
+                data_ms_ft_norm_val = None
+
+            data_ms_ft = self._get_data_ms_ft(data, vtype, data_ms_ft_norm_val)
+
+        else:
+            data_ms_ft = None
+
+        if self._sett_obj_match_probs_ms_ft_flag:
+            if vtype == 'sim':
+                probs_ms_ft_norm_val = self._rr.probs_ms_ft_norm_val
+
+            else:
+                probs_ms_ft_norm_val = None
+
+            probs_ms_ft = self._get_probs_ms_ft(probs, vtype, probs_ms_ft_norm_val)
+
+        else:
+            probs_ms_ft = None
+
         c_scorrs = scorrs is not None
         c_scorr_diffs = scorr_diffs is not None
         c_asymms_1 = asymms_1 is not None
@@ -826,6 +850,8 @@ class GTGPrepareUpdate:
         rltzn_cls.probs_ft = probs_ft
         rltzn_cls.scorrs_ms = scorrs_ms
         rltzn_cls.ecop_etpy_ms = ecop_etpy_ms
+        rltzn_cls.data_ms_ft = data_ms_ft
+        rltzn_cls.probs_ms_ft = probs_ms_ft
 
         if vtype == 'ref':
             pass

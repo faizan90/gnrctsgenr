@@ -58,7 +58,9 @@ class GTGSettings:
         self._sett_obj_etpy_ms_ft_flag = None
         self._sett_obj_scorr_ms_flag = None
         self._sett_obj_etpy_ms_flag = None
-        self._sett_obj_n_flags = 24  # 2 additional flags for obj flags.
+        self._sett_obj_match_data_ms_ft_flag = None
+        self._sett_obj_match_probs_ms_ft_flag = None
+        self._sett_obj_n_flags = 26  # 2 additional flags for obj flags.
 
         self._sett_obj_flag_vals = None
         self._sett_obj_flag_labels = np.array([
@@ -84,6 +86,8 @@ class GTGSettings:
             'Entropy FT (multisite)',
             'Spearman correlation (multisite)',
             'Empirical copula entropy (multisite)',
+            'Data FT (multisite)',
+            'Probs FT (multisite)',
             ])
 
         # Simulated Annealing.
@@ -188,7 +192,9 @@ class GTGSettings:
             ratio_per_dens_bin,
             etpy_ms_ft_flag,
             scorr_ms_flag,
-            etpy_ms_flag):
+            etpy_ms_flag,
+            match_data_ms_ft_flag,
+            match_probs_ms_ft_flag):
 
         '''
         Type of objective functions to use and their respective inputs.
@@ -300,6 +306,12 @@ class GTGSettings:
             Multisite version of the spearman correlation.
         etpy_ms_flag :  bool
             Multisite version of the copula entropy.
+        match_data_ms_ft_flag : bool
+            Multisite version of match_data_ft_flag. The cummulative
+            power spectrum (multivariate maximum correlation) is taken.
+        match_probs_ms_ft_flag : bool
+            Multisite version of match_probs_ft_flag. The cummulative
+            power spectrum (multivariate maximum correlation) is taken.
         '''
 
         if self._vb:
@@ -379,6 +391,12 @@ class GTGSettings:
         assert isinstance(etpy_ms_flag, bool), (
             'etpy_ms_flag not a boolean!')
 
+        assert isinstance(match_data_ms_ft_flag, bool), (
+            'match_data_ms_ft_flag not a boolean!')
+
+        assert isinstance(match_probs_ms_ft_flag, bool), (
+            'match_probs_ms_ft_flag not a boolean!')
+
         assert any([
             scorr_flag,
             asymm_type_1_flag,
@@ -402,6 +420,8 @@ class GTGSettings:
             etpy_ms_ft_flag,
             scorr_ms_flag,
             etpy_ms_flag,
+            match_data_ms_ft_flag,
+            match_probs_ms_ft_flag,
             ]), 'All objective function flags are False!'
 
         assert isinstance(lag_steps, np.ndarray), (
@@ -511,6 +531,8 @@ class GTGSettings:
         self._sett_obj_etpy_ms_ft_flag = etpy_ms_ft_flag
         self._sett_obj_scorr_ms_flag = scorr_ms_flag
         self._sett_obj_etpy_ms_flag = etpy_ms_flag
+        self._sett_obj_match_data_ms_ft_flag = match_data_ms_ft_flag
+        self._sett_obj_match_probs_ms_ft_flag = match_probs_ms_ft_flag
 
         self._sett_obj_lag_steps_vld = np.sort(np.union1d(
             self._sett_obj_lag_steps, lag_steps_vld.astype(np.int64)))
@@ -638,6 +660,12 @@ class GTGSettings:
             print(
                 'Multisite entropy flag:',
                 self._sett_obj_etpy_ms_flag)
+
+            print('Multisite match data FT flag:',
+                  self._sett_obj_match_data_ms_ft_flag)
+
+            print('Multisite match probs FT flag:',
+                  self._sett_obj_match_probs_ms_ft_flag)
 
             print_el()
 
@@ -1536,6 +1564,8 @@ class GTGSettings:
                 self._sett_obj_etpy_ms_ft_flag,
                 self._sett_obj_scorr_ms_flag,
                 self._sett_obj_etpy_ms_flag,
+                self._sett_obj_match_data_ms_ft_flag,
+                self._sett_obj_match_probs_ms_ft_flag,
                 ]):
 
             assert self._data_ref_n_labels > 1, (
@@ -1579,6 +1609,8 @@ class GTGSettings:
             self._sett_obj_etpy_ms_ft_flag,
             self._sett_obj_scorr_ms_flag,
             self._sett_obj_etpy_ms_flag,
+            self._sett_obj_match_data_ms_ft_flag,
+            self._sett_obj_match_probs_ms_ft_flag,
             ])
 
         assert (self._sett_obj_flag_labels.size ==
@@ -1610,7 +1642,8 @@ class GTGSettings:
                 self._sett_obj_pcorr_flag,
                 self._sett_obj_asymm_type_1_ft_flag,
                 self._sett_obj_asymm_type_2_ft_flag,
-                self._sett_obj_etpy_ft_flag]
+                self._sett_obj_etpy_ft_flag,
+                ]
 
         self._sett_wts_nths_obj_flags = [
                 self._sett_obj_nth_ord_diffs_flag,

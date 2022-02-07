@@ -172,6 +172,62 @@ class GTGPrepareTfms:
 
         return (mag_spec_cumsum, norm_val, sclrs, frst_term)
 
+    def _get_data_ms_ft(self, data, vtype, norm_val):
+
+        '''
+        Multivariate maximum correlation.
+        '''
+
+        assert data.ndim == 2
+
+        data_ft = np.fft.rfft(data, axis=0)
+        data_mag_spec = np.abs(data_ft)[1:]
+
+        data_ms_ft = data_mag_spec.prod(axis=1).cumsum()
+
+        if (vtype == 'sim') and (norm_val is not None):
+            data_ms_ft /= norm_val
+
+        elif (vtype == 'ref') and (norm_val is None):
+            self._rr.data_ms_ft_norm_val = (
+                (data_mag_spec ** data_ft.shape[1]).sum(axis=0).prod()
+                ) ** (1.0 / data_ft.shape[1])
+
+            data_ms_ft /= self._rr.data_ms_ft_norm_val
+
+        else:
+            raise NotImplementedError
+
+        return data_ms_ft
+
+    def _get_probs_ms_ft(self, probs, vtype, norm_val):
+
+        '''
+        Multivariate maximum correlation.
+        '''
+
+        assert probs.ndim == 2
+
+        probs_ft = np.fft.rfft(probs, axis=0)
+        probs_mag_spec = np.abs(probs_ft)[1:]
+
+        probs_ms_ft = probs_mag_spec.prod(axis=1).cumsum()
+
+        if (vtype == 'sim') and (norm_val is not None):
+            probs_ms_ft /= norm_val
+
+        elif (vtype == 'ref') and (norm_val is None):
+            self._rr.probs_ms_ft_norm_val = (
+                (probs_mag_spec ** probs_ft.shape[1]).sum(axis=0).prod()
+                ) ** (1.0 / probs_ft.shape[1])
+
+            probs_ms_ft /= self._rr.probs_ms_ft_norm_val
+
+        else:
+            raise NotImplementedError
+
+        return probs_ms_ft
+
     def _get_gnrc_mult_ft(self, data, vtype, tfm_type):
 
         '''
