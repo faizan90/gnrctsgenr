@@ -24,7 +24,7 @@ class GTGData:
         self._data_ref_labels = None
         self._data_ref_n_labels = None
 
-        self._data_min_pts = 3
+        self._data_min_pts = 4
 
         self._data_ref_set_flag = False
         self._data_verify_flag = False

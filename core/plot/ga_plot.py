@@ -3,7 +3,7 @@ Created on Nov 15, 2021
 
 @author: Faizan3800X-Uni
 '''
-
+import numpy as np
 import matplotlib as mpl
 # Has to be big enough to accomodate all plotted values.
 mpl.rcParams['agg.path.chunksize'] = 50000
@@ -13,7 +13,6 @@ import traceback as tb
 from pathlib import Path
 
 import h5py
-import numpy as np
 import matplotlib.pyplot as plt
 
 from ...misc import print_sl, print_el, get_n_cpus

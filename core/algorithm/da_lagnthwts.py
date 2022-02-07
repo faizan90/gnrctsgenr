@@ -83,11 +83,11 @@ class GTGAlgLagNthWts:
                     assert len(lag_nth_dict[(label, lag_nth)])
 
                     mean_obj_val = np.array(
-                        lag_nth_dict[(label, lag_nth)]).min()
+                        lag_nth_dict[(label, lag_nth)]).mean()
 
                     mean_obj_vals.append(mean_obj_val)
 
-                mean_obj_vals = np.array(mean_obj_vals)
+                mean_obj_vals = np.abs(np.array(mean_obj_vals))
 
                 assert np.all(np.isfinite(mean_obj_vals))
 

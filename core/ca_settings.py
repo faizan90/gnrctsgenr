@@ -1432,7 +1432,7 @@ class GTGSettings:
     def set_misc_settings(self, n_rltzns, outputs_dir, n_cpus):
 
         '''
-        Some more parameters
+        Some more parameters.
 
         Parameters
         ----------

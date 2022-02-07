@@ -28,4 +28,6 @@ class GTGPrepareRltznGnrc:
         self.probs_ft = None
         self.scorrs_ms = None
         self.ecop_etpy_ms = None
+
+        self.skip_io_vars = []
         return

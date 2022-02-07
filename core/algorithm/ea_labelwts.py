@@ -58,10 +58,10 @@ class GTGAlgLabelWts:
         for label in labels:
             assert len(label_dict[label])
 
-            mean_obj_val = np.array(label_dict[label]).min()
+            mean_obj_val = np.array(label_dict[label]).mean()
             mean_obj_vals.append(mean_obj_val)
 
-        mean_obj_vals = np.array(mean_obj_vals)
+        mean_obj_vals = np.abs(np.array(mean_obj_vals))
 
         assert np.all(np.isfinite(mean_obj_vals))
 

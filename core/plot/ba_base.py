@@ -55,7 +55,7 @@ class GTGPlotBase:
         clr_1 = 'k'
         clr_2 = 'r'
 
-        default_line_sett = PlotLineSettings(
+        self._default_line_sett = PlotLineSettings(
             (15, 5.5),
             dpi,
             fontsize,
@@ -66,14 +66,13 @@ class GTGPlotBase:
             clr_1,
             clr_2)
 
-        self._plt_sett_tols = default_line_sett
-        self._plt_sett_objs = default_line_sett
-        self._plt_sett_acpt_rates = default_line_sett
-        self._plt_sett_phss = default_line_sett
-        self._plt_sett_temps = default_line_sett
-        self._plt_sett_phs_red_rates = default_line_sett  # TODO: PA only.
-        self._plt_sett_idxs = default_line_sett
-        self._plt_sett_tmrs = default_line_sett
+        self._plt_sett_tols = self._default_line_sett
+        self._plt_sett_objs = self._default_line_sett
+        self._plt_sett_acpt_rates = self._default_line_sett
+        self._plt_sett_phss = self._default_line_sett
+        self._plt_sett_temps = self._default_line_sett
+        self._plt_sett_tmrs = self._default_line_sett
+        self._plt_sett_idxs = self._default_line_sett
 
         self._plt_sett_1D_vars = PlotLineSettings(
             (10, 10),

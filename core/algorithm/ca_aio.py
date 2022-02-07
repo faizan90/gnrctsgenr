@@ -23,6 +23,20 @@ class GTGAlgIO:
 
         return
 
+    def _write_ref_rltzn_extra(self, *args):
+
+        _ = args
+
+        raise NotImplementedError('Implement your own!')
+        return
+
+    def _write_sim_rltzn_extra(self, *args):
+
+        _ = args
+
+        raise NotImplementedError('Implement your own!')
+        return
+
     def _write_cls_rltzn(self):
 
         with self._lock:
@@ -31,6 +45,9 @@ class GTGAlgIO:
             with h5py.File(h5_path, mode='a', driver=None) as h5_hdl:
                 self._write_ref_rltzn(h5_hdl)
                 self._write_sim_rltzn(h5_hdl)
+
+                self._write_ref_rltzn_extra(h5_hdl)
+                self._write_sim_rltzn_extra(h5_hdl)
         return
 
     def _write_ref_rltzn(self, h5_hdl):
@@ -178,9 +195,16 @@ class GTGAlgIO:
                 ref_grp[data_lab] = data_val[0]
 
             else:
-                raise NotImplementedError(
-                    f'Unknown type {type(data_val)} for variable '
-                    f'{data_lab}!')
+                if data_lab == 'skip_io_vars':
+                    pass
+
+                elif data_lab in self._rr.skip_io_vars:
+                    pass
+
+                else:
+                    raise NotImplementedError(
+                        f'Unknown type {type(data_val)} for variable '
+                        f'{data_lab}!')
 
         h5_hdl.flush()
         return
@@ -262,7 +286,18 @@ class GTGAlgIO:
                 continue
 
             else:
-                raise NotImplementedError((var, var_val))
+                if var == 'skip_io_vars':
+                    pass
+
+                elif var in self._rr.skip_io_vars:
+                    pass
+
+                else:
+                    raise NotImplementedError((var, var_val))
+
+                    # raise NotImplementedError(
+                    #     f'Unknown type {type(data_val)} for variable '
+                    #     f'{data_lab}!')
 
         h5_hdl.flush()
         return

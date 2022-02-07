@@ -22,7 +22,7 @@ class GTGSave:
 
     def __init__(self):
 
-        self._save_h5_name = 'phsann.h5'
+        self._save_h5_name = 'outputs.h5'
 
         self._save_verify_flag = True
         return

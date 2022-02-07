@@ -131,7 +131,9 @@ class GTGAlgObjective:
                 obj_val += label_obj_val * wt
 
         else:
-            obj_val = ((self._rr.scorrs - self._rs.scorrs) ** 2).sum()
+            obj_val = (
+                (self._rr.scorrs - self._rs.scorrs
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -247,7 +249,9 @@ class GTGAlgObjective:
                 obj_val += label_obj_val * wt
 
         else:
-            obj_val = ((self._rr.asymms_1 - self._rs.asymms_1) ** 2).sum()
+            obj_val = (
+                (self._rr.asymms_1 - self._rs.asymms_1
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -363,7 +367,9 @@ class GTGAlgObjective:
                 obj_val += label_obj_val * wt
 
         else:
-            obj_val = ((self._rr.asymms_2 - self._rs.asymms_2) ** 2).sum()
+            obj_val = (
+                (self._rr.asymms_2 - self._rs.asymms_2
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -480,7 +486,8 @@ class GTGAlgObjective:
 
         else:
             obj_val = (
-                (self._rr.ecop_dens - self._rs.ecop_dens) ** 2).sum()
+                (self._rr.ecop_dens - self._rs.ecop_dens
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -595,7 +602,9 @@ class GTGAlgObjective:
                 obj_val += label_obj_val * wt
 
         else:
-            obj_val = ((self._rr.ecop_etpy - self._rs.ecop_etpy) ** 2).sum()
+            obj_val = (
+                (self._rr.ecop_etpy - self._rs.ecop_etpy
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -715,7 +724,9 @@ class GTGAlgObjective:
                 obj_val += label_obj_val * wt
 
         else:
-            obj_val = ((self._rr.nths - self._rs.nths) ** 2).sum()
+            obj_val = (
+                (self._rr.nths - self._rs.nths
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -891,7 +902,9 @@ class GTGAlgObjective:
                 obj_val += label_obj_val * wt
 
         else:
-            obj_val = ((self._rr.pcorrs - self._rs.pcorrs) ** 2).sum()
+            obj_val = (
+                (self._rr.pcorrs - self._rs.pcorrs
+                 ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -952,7 +965,8 @@ class GTGAlgObjective:
 
                 sim_diffs = self._rs.mult_asymm_1_diffs[comb].sum()
 
-                obj_val += ((ref_diffs - sim_diffs) ** 2).sum()
+                obj_val += (
+                    (ref_diffs - sim_diffs) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1013,7 +1027,8 @@ class GTGAlgObjective:
 
                 sim_diffs = self._rs.mult_asymm_2_diffs[comb].sum()
 
-                obj_val += ((ref_diffs - sim_diffs) ** 2).sum()
+                obj_val += (
+                    (ref_diffs - sim_diffs) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1074,7 +1089,8 @@ class GTGAlgObjective:
 
                 sim_diffs = self._rs.mult_ecop_dens[comb].sum()
 
-                obj_val += ((ref_diffs - sim_diffs) ** 2).sum()
+                obj_val += (
+                    (ref_diffs - sim_diffs) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1084,7 +1100,13 @@ class GTGAlgObjective:
 
     def _get_obj_data_ft_val(self):
 
-        obj_val = (((self._rr.data_ft - self._rs.data_ft)) ** 2).sum()
+        obj_val = (
+            (self._rr.data_ft - self._rs.data_ft
+             ) ** self._alg_cnsts_diffs_exp).sum()
+
+        # obj_val += (
+        #     (np.abs(self._rr.ft[1:,:]) -
+        #      np.abs(self._rs.ft[1:,:])) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1094,7 +1116,9 @@ class GTGAlgObjective:
 
     def _get_obj_probs_ft_val(self):
 
-        obj_val = (((self._rr.probs_ft - self._rs.probs_ft)) ** 2).sum()
+        obj_val = (
+            (self._rr.probs_ft - self._rs.probs_ft
+             ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1443,7 +1467,9 @@ class GTGAlgObjective:
 
     def _get_obj_scorr_ms_val(self):
 
-        obj_val = ((self._rr.scorrs_ms - self._rs.scorrs_ms) ** 2).sum()
+        obj_val = (
+            (self._rr.scorrs_ms - self._rs.scorrs_ms
+             ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1453,7 +1479,9 @@ class GTGAlgObjective:
 
     def _get_obj_ecop_etpy_ms_val(self):
 
-        obj_val = ((self._rr.ecop_etpy_ms - self._rs.ecop_etpy_ms) ** 2).sum()
+        obj_val = (
+            (self._rr.ecop_etpy_ms - self._rs.ecop_etpy_ms
+             ) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:

@@ -31,7 +31,7 @@ class GTGAlgAutoObjWts:
         '''
 
         # Max seems to perform better than min and mean.
-        means = np.array(self._alg_wts_obj_raw).max(axis=0)
+        means = np.abs(np.array(self._alg_wts_obj_raw)).max(axis=0)
 
         assert np.all(np.isfinite(means))
 

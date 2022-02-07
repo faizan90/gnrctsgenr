@@ -4,6 +4,8 @@ Created on Nov 17, 2021
 @author: Faizan3800X-Uni
 '''
 
+from ...misc import print_sl, print_el
+
 
 class GTGAlgBase:
 
@@ -50,14 +52,7 @@ class GTGAlgBase:
         self._alg_wts_obj_search_flag = False
 
         # Stopping criteria labels.
-        self._alg_cnsts_stp_crit_labs = (
-            'Iteration completion',
-            'Iterations without acceptance',
-            'Running objective function tolerance',
-            'Annealing temperature',
-            'Running phase reduction rate',
-            'Running acceptance rate',
-            'Iterations without updating the global minimum')
+        self._alg_cnsts_stp_crit_labs = None
 
         # Closest value that is less than or equal to be taken as a zero.
         self._alg_cnsts_almost_zero = 1e-15
@@ -80,9 +75,53 @@ class GTGAlgBase:
         self._alg_cnsts_lag_wts_overall_err_flag = True
 
         # Flags.
+        self._alg_cnsts_stp_crit_labs_flag = False
         self._alg_rltzns_gen_flag = False
         self._alg_force_acpt_flag = False
         self._alg_done_opt_flag = False
         self._alg_ann_runn_auto_init_temp_search_flag = False
         self._alg_verify_flag = False
+        return
+
+    def set_stop_criteria_labels(self, stop_criteria_labels):
+
+        '''
+        Set the labels for the stopping criteria. This information is
+        used when showing stopping criterium that caused the annealing to
+        stop.
+
+        Parameters
+        ----------
+        stop_criteria_labels : list or tuple of strings
+            These should be the same length as the number of variabels
+            tested in the _get_stopp_criteria method. It cannot be emtpy.
+            The labels must have a length of at least one.
+        '''
+
+        if self._vb:
+            print_sl()
+
+            print('Setting algortihm base settings...\n')
+
+        assert isinstance(stop_criteria_labels, (list, tuple)), (
+            'stop_criteria_labels not a list or tuple object!')
+
+        assert len(stop_criteria_labels), 'Empty stop_criteria_labels!'
+
+        assert all([isinstance(x, str) for x in stop_criteria_labels]), (
+            'Invalid data types inside of stop_criteria_labels!')
+
+        assert all([len(x) for x in stop_criteria_labels]), (
+            'Empty strings inside of stop_criteria_labels!')
+
+        self._alg_cnsts_stp_crit_labs = tuple(stop_criteria_labels)
+
+        if self._vb:
+            print(
+                'Algorithm stop criteria labels:',
+                self._alg_cnsts_stp_crit_labs)
+
+            print_el()
+
+        self._alg_cnsts_stp_crit_labs_flag = True
         return

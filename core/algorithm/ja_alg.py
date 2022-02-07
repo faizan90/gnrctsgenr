@@ -8,7 +8,6 @@ from time import asctime
 from timeit import default_timer
 
 import h5py
-import numpy as np
 from multiprocessing import Manager, Lock
 from pathos.multiprocessing import ProcessPool
 
@@ -136,22 +135,6 @@ class GTGAlgorithm:
         self._alg_rltzns_gen_flag = True
         return
 
-    def verify(self):
-
-        assert self._prep_verify_flag, 'Prepare in an unverified state!'
-
-        if self._vb:
-            print_sl()
-
-            print(
-                'Simulated annealing algorithm requirements verified '
-                'successfully!')
-
-            print_el()
-
-        self._alg_verify_flag = True
-        return
-
     def _init_output(self):
 
         if self._vb:
@@ -239,6 +222,25 @@ class GTGAlgorithm:
                     f'{beg_rltzn_iter} and {end_rltzn_iter - 1} was '
                     f'{end_thread_time - beg_thread_time:0.3f} '
                     f'seconds.')
+        return
+
+    def verify(self):
+
+        assert self._alg_cnsts_stp_crit_labs_flag, (
+            'Stop criteria labels not set!')
+
+        assert self._prep_verify_flag, 'Prepare in an unverified state!'
+
+        if self._vb:
+            print_sl()
+
+            print(
+                'Simulated annealing algorithm requirements verified '
+                'successfully!')
+
+            print_el()
+
+        self._alg_verify_flag = True
         return
 
     __verify = verify

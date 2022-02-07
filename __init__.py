@@ -49,5 +49,7 @@ from .core import (
     GenericTimeSeriesGeneratorPlot,
     )
 
+from .misc import roll_real_2arrs
+
 current_process().authkey = 'gnrctsgenr'.encode(
     encoding='utf_8', errors='strict')
