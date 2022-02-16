@@ -1618,7 +1618,7 @@ class GTGAlgObjective:
         obj_vals = np.array(obj_vals, dtype=np.float64)
 
         if not self._alg_done_opt_flag:
-            obj_vals *= 1000
+            obj_vals *= 1e3
 
             assert np.all(np.isfinite(obj_vals)), (
                 f'Invalid obj_vals: {obj_vals}!')

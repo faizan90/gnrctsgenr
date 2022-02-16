@@ -106,8 +106,8 @@ class GTGSettings:
         self._sett_ann_auto_init_temp_temp_bd_lo = None
         self._sett_ann_auto_init_temp_temp_bd_hi = None
         self._sett_ann_auto_init_temp_niters = None
-        self._sett_ann_auto_init_temp_acpt_min_bd_lo = 0.20  # Needed for polyfit.
-        self._sett_ann_auto_init_temp_acpt_max_bd_hi = 0.85  # Needed for polyfit.
+        self._sett_ann_auto_init_temp_acpt_min_bd_lo = 0.10  # Needed for polyfit.
+        self._sett_ann_auto_init_temp_acpt_max_bd_hi = 0.90  # Needed for polyfit.
         self._sett_ann_auto_init_temp_acpt_polyfit_n_pts = 5  # Needed for polyfit.
         self._sett_ann_auto_init_temp_acpt_bd_lo = None
         self._sett_ann_auto_init_temp_acpt_bd_hi = None
