@@ -41,7 +41,7 @@ class GTGPrepareUpdate:
     @GTGBase._timer_wrap
     def _update_obj_vars(self, vtype):
 
-        '''Required variables e.g. self._XXX_probs should have been
+        '''Required variables e.g. self._XXX.probs should have been
         defined/updated before entering.
         '''
 

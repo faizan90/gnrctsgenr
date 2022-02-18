@@ -101,6 +101,7 @@ class GTGSettings:
         self._sett_ann_acpt_rate_iters = None
         self._sett_ann_stop_acpt_rate = None
         self._sett_ann_max_iter_wo_min_updt = None
+        self._sett_ann_acpt_thresh = None
 
         # Automatic initialization temperature.
         self._sett_ann_auto_init_temp_temp_bd_lo = None
@@ -683,7 +684,8 @@ class GTGSettings:
             objective_tolerance_iterations,
             acceptance_rate_iterations,
             stop_acpt_rate,
-            maximum_iterations_without_updating_best):
+            maximum_iterations_without_updating_best,
+            acceptance_threshold_ratio):
 
         '''
         Simulated annealing algorithm parameters.
@@ -722,6 +724,11 @@ class GTGSettings:
             solution. This is important for cases where the optimization
             stagnates, keeps on updating the current solution but never
             the global minimum. Should be >= 0.
+        acceptance_threshold_ratio : float
+            Ratio of the previous objective function value by which the
+            current value should be better. This is avoid acceptance of
+            abysmally small improvements in the objective function value.
+            Should be greater than equal to 0.0.
         '''
 
         if self._vb:
@@ -792,6 +799,12 @@ class GTGSettings:
         assert maximum_iterations_without_updating_best >= 0, (
             'Invalid maximum_iterations_without_updating_best!')
 
+        assert isinstance(acceptance_threshold_ratio, float), (
+            'acceptance_threshold_ratio not a float!')
+
+        assert acceptance_threshold_ratio >= 0, (
+            'Invalid acceptance_threshold_ratio!')
+
         self._sett_ann_init_temp = initial_annealing_temperature
         self._sett_ann_temp_red_rate = temperature_reduction_rate
         self._sett_ann_upt_evry_iter = update_at_every_iteration_no
@@ -804,6 +817,8 @@ class GTGSettings:
 
         self._sett_ann_max_iter_wo_min_updt = (
             maximum_iterations_without_updating_best)
+
+        self._sett_ann_acpt_thresh = acceptance_threshold_ratio
 
         if self._vb:
 
@@ -842,6 +857,10 @@ class GTGSettings:
             print(
                 'Maximum iterations without updating the global minimum:',
                 self._sett_ann_max_iter_wo_min_updt)
+
+            print(
+                'Acceptance threshold:',
+                self._sett_ann_acpt_thresh)
 
             print_el()
 
