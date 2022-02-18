@@ -91,6 +91,8 @@ def roll_real_2arrs(arr1, arr2, lag, rerank_flag=False):
     assert isinstance(lag, (int, np.int64))
     assert abs(lag) < arr1.size
 
+    assert isinstance(rerank_flag, bool)
+
     if lag > 0:
         # arr2 is shifted ahead
         arr1 = arr1[:-lag].copy()
