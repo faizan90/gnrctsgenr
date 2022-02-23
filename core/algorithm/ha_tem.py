@@ -72,10 +72,17 @@ class GTGAlgTemperature:
 
         acpt_rates_temps = acpt_rates_temps[keep_idxs,:].copy()
 
+        poly_deg = 4
+        if keep_idxs.sum() < poly_deg:
+            poly_deg = keep_idxs.sum()
+
+        if (poly_deg % 2) and poly_deg > 2:
+            poly_deg -= 1
+
         poly_coeffs = np.polyfit(
             acpt_rates_temps[:, 0],
             acpt_rates_temps[:, 1],
-            deg=min(4, keep_idxs.sum()))
+            deg=poly_deg)
 
         poly_ftn = np.poly1d(poly_coeffs)
 

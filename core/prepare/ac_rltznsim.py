@@ -18,64 +18,62 @@ class GTGPrepareRltznSim(GTGRG):
         self.shape = None
         self.ft_best = None
 
-        self.ref_sim_ft_corr = None
-        self.sim_sim_ft_corr = None
+        self.ref_sim_ft_corr = None  # Transformed data.
+        self.sim_sim_ft_corr = None  # Transformed data.
 
-        self.n_idxs_all_cts = None
-        self.n_idxs_acpt_cts = None
+        self.n_idxs_all_cts = None  # Histogram of generated phase indices.
+        self.n_idxs_acpt_cts = None  # Histogram of accepted phase indices.
 
         # Objective function variables.
-        self.scorr_diffs = None
-        self.asymm_1_diffs = None
-        self.asymm_2_diffs = None
-        self.ecop_dens_diffs = None
-        self.ecop_etpy_diffs = None
-        self.nth_ord_diffs = None
-        self.pcorr_diffs = None
+        self.scorr_diffs = None  # Distributed bivariate.
+        self.asymm_1_diffs = None  # Distributed bivariate.
+        self.asymm_2_diffs = None  # Distributed bivariate.
+        self.ecop_dens_diffs = None  # Distributed bivariate.
+        self.ecop_etpy_diffs = None  # Distributed bivariate.
+        self.nth_ord_diffs = None  # Distributed.
+        self.pcorr_diffs = None  # Distributed bivariate.
 
-        self.mult_asymm_1_diffs = None
-        self.mult_asymm_2_diffs = None
-        self.mult_ecop_dens = None
+        self.mult_asymm_1_diffs = None  # Distributed bivariate.
+        self.mult_asymm_2_diffs = None  # Distributed bivariate.
+        self.mult_ecop_dens = None  # Distributed bivariate.
 
-        self.asymm_1_diffs_ft = None
-        self.asymm_2_diffs_ft = None
-        self.nth_ord_diffs_ft = None
-        self.etpy_ft = None
-        self.mult_asymm_1_cmpos_ft = None
-        self.mult_asymm_2_cmpos_ft = None
-        self.mult_etpy_cmpos_ft = None
+        self.asymm_1_diffs_ft = None  # Distributed bivariate.
+        self.asymm_2_diffs_ft = None  # Distributed bivariate.
+        self.nth_ord_diffs_ft = None  # Distributed.
+        self.etpy_ft = None  # Distributed bivariate.
+        self.mult_asymm_1_cmpos_ft = None  # Distributed bivariate.
+        self.mult_asymm_2_cmpos_ft = None  # Distributed bivariate.
+        self.mult_etpy_cmpos_ft = None  # Distributed bivariate.
 
         # QQ probs.
-        self.scorr_qq_dict = None
-        self.asymm_1_qq_dict = None
-        self.asymm_2_qq_dict = None
-        self.ecop_dens_qq_dict = None
-        self.ecop_etpy_qq_dict = None
-        self.nth_ords_qq_dict = None
-        self.pcorr_qq_dict = None
+        self.scorr_qq_dict = None  # Distributed bivariate.
+        self.asymm_1_qq_dict = None  # Distributed bivariate.
+        self.asymm_2_qq_dict = None  # Distributed bivariate.
+        self.ecop_dens_qq_dict = None  # Distributed bivariate.
+        self.ecop_etpy_qq_dict = None  # Distributed bivariate.
+        self.nth_ords_qq_dict = None  # Distributed.
+        self.pcorr_qq_dict = None  # Distributed bivariate.
 
-        self.mult_asymm_1_qq_dict = None
-        self.mult_asymm_2_qq_dict = None
+        self.mult_asymm_1_qq_dict = None  # Distributed bivariate.
+        self.mult_asymm_2_qq_dict = None  # Distributed bivariate.
         self.mult_ecop_dens_qq_dict = None  # TODO: This is not used anywhere.
 
         # Durations.
-        self.cumm_call_durations = None
-        self.cumm_n_calls = None
+        self.cumm_call_durations = None  # Time spent in various methods.
+        self.cumm_n_calls = None  # Number of times various methods are called.
 
         # Optimization state and other variables.
-        self.iter_ctr = None
-        self.iters_wo_acpt = None
-        self.tol = None
-        self.temp = None
-        self.stopp_criteria = None
-        self.tols = None
-        self.obj_vals_all = None
-        self.acpts_rjts_all = None
-        self.acpt_rates_all = None
-        self.obj_vals_min = None
-        self.temps = None
-        self.acpt_rates_dfrntl = None
-        self.ref_sim_ft_corr = None
-        self.sim_sim_ft_corr = None
-        self.obj_vals_all_indiv = None
+        self.iter_ctr = None  # Iteration counter.
+        self.iters_wo_acpt = None  # Continuous iterations without acceptance.
+        self.tol = None  # Iteration objective function value tolerance.
+        self.temp = None  # Iteration temperature value.
+        self.stopp_criteria = None  # State of stopping criteria.
+        self.tols = None  # Running objective function values tolerance.
+        self.obj_vals_all = None  # All objective function values.
+        self.acpts_rjts_all = None  # All acceptance / rejection values.
+        self.acpt_rates_all = None  # Running acceptance rate.
+        self.obj_vals_min = None  # Running minimum objective function values.
+        self.temps = None  # All temperatures.
+        self.acpt_rates_dfrntl = None  # Acpt. rate of past few iterations.
+        self.obj_vals_all_indiv = None  # All obj. ftn. values.
         return

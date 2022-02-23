@@ -13,23 +13,23 @@ class GTGPrepareRltznGnrc:
 
         self.label = None
         self.probs = None
-        self.ft = None
-        self.phs_spec = None
-        self.mag_spec = None
-        self.scorrs = None
-        self.asymms_1 = None
-        self.asymms_2 = None
-        self.ecop_dens = None
-        self.ecop_etpy = None
-        self.data = None
-        self.pcorrs = None
-        self.nths = None
-        self.data_ft = None
-        self.probs_ft = None
-        self.scorrs_ms = None
-        self.ecop_etpy_ms = None
-        self.data_ms_ft = None
-        self.probs_ms_ft = None
+        self.ft = None  # FT coefficients of the transformed series.
+        self.phs_spec = None  # Of the transformed series.
+        self.mag_spec = None  # Of the transformed series.
+        self.scorrs = None  # Lumped bivariate.
+        self.asymms_1 = None  # Lumped bivariate.
+        self.asymms_2 = None  # Lumped bivariate.
+        self.ecop_dens = None  # Lumped bivariate.
+        self.ecop_etpy = None  # Lumped bivariate.
+        self.data = None  # Original (reshuffled for sims) data.
+        self.pcorrs = None  # Lumped bivariate.
+        self.nths = None  # Lumped nth order sums.
+        self.data_ft = None  # Actually, cumm_corr_spec.
+        self.probs_ft = None  # Actually, cumm_corr_spec.
+        self.scorrs_ms = None  # Multivariate Spearman corr.
+        self.ecop_etpy_ms = None  # Lumped, on a multivariate E. copula.
+        self.data_ms_ft = None  # Actually, cumm_max_corr_spec.
+        self.probs_ms_ft = None  # Actually, cumm_max_corr_spec.
 
-        self.skip_io_vars = []
+        self.skip_io_vars = []  # Not to write in the main save function.
         return
