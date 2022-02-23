@@ -1470,7 +1470,7 @@ class GTGPlotSingleSite:
 
         if self._vb:
             print(
-                f'Plotting single-site 2D lumped statistics'
+                f'Plotting single-site 2D lumped statistics '
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
