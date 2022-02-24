@@ -269,6 +269,8 @@ class GTGPrepareTfms:
 
         assert mags_spec.ndim == 2
 
+        mags_spec = mags_spec[1:,:]
+
         cumm_corrs = mags_spec.prod(axis=1).cumsum()
 
         if (vtype == 'sim') and (data_type == 'data'):
@@ -279,7 +281,7 @@ class GTGPrepareTfms:
 
         elif vtype == 'ref':
             norm_val = (
-                (cumm_corrs ** mags_spec.shape[1]).sum(axis=0).prod()
+                (mags_spec ** mags_spec.shape[1]).sum(axis=0).prod()
                 ) ** (1.0 / mags_spec.shape[1])
 
             if data_type == 'data':
