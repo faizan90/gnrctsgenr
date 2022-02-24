@@ -80,6 +80,10 @@ class GTGPrepareTfms:
 
     def _get_cumm_ft_corr(self, ref_ft, sim_ft):
 
+        '''
+        There are no predefined norming values here.
+        '''
+
         ref_mag = np.abs(ref_ft)
         ref_phs = np.angle(ref_ft)
 
@@ -97,45 +101,38 @@ class GTGPrepareTfms:
 
         return np.cumsum(numr, axis=0) / demr
 
-    def _get_data_ft(self, data, vtype, norm_vals):
+    def _get_auto_cumm_corrs_ft(self, mag_spec, vtype, data_type):
 
-        data_ft = np.fft.rfft(data, axis=0)
-        data_mag_spec = np.abs(data_ft)[1:]
+        '''
+        Auto cumm. corr.
 
-        data_mag_spec = (data_mag_spec ** 2).cumsum(axis=0)
+        mag_spec can be of the data or probs.
+        '''
 
-        if (vtype == 'sim') and (norm_vals is not None):
-            data_mag_spec /= norm_vals
+        mag_spec = mag_spec[1:,:]
 
-        elif (vtype == 'ref') and (norm_vals is None):
-            self._rr.data_ft_norm_vals = data_mag_spec[-1,:].copy()
+        cumm_pwrs = (mag_spec ** 2).cumsum(axis=0)
 
-            data_mag_spec /= self._rr.data_ft_norm_vals
+        if (vtype == 'sim') and (data_type == 'data'):
+            norm_vals = self._rr.data_ft_norm_vals
 
-        else:
-            raise NotImplementedError
+        elif (vtype == 'sim') and (data_type == 'probs'):
+            norm_vals = self._rr.probs_ft_norm_vals
 
-        return data_mag_spec
+        elif (vtype == 'ref') and (data_type == 'data'):
+            norm_vals = cumm_pwrs[-1,:].copy().reshape(1, -1)
+            self._rr.data_ft_norm_vals = norm_vals
 
-    def _get_probs_ft(self, probs, vtype, norm_vals):
-
-        probs_ft = np.fft.rfft(probs, axis=0)
-        probs_mag_spec = np.abs(probs_ft)[1:]
-
-        probs_mag_spec = (probs_mag_spec ** 2).cumsum(axis=0)
-
-        if (vtype == 'sim') and (norm_vals is not None):
-            probs_mag_spec /= norm_vals
-
-        elif (vtype == 'ref') and (norm_vals is None):
-            self._rr.probs_ft_norm_vals = probs_mag_spec[-1,:].copy()
-
-            probs_mag_spec /= self._rr.probs_ft_norm_vals
+        elif (vtype == 'ref') and (data_type == 'probs'):
+            norm_vals = cumm_pwrs[-1,:].copy().reshape(1, -1)
+            self._rr.probs_ft_norm_vals = norm_vals
 
         else:
             raise NotImplementedError
 
-        return probs_mag_spec
+        cumm_pwrs /= norm_vals
+
+        return cumm_pwrs
 
     def _get_gnrc_ft(self, data, vtype):
 
@@ -172,38 +169,24 @@ class GTGPrepareTfms:
 
         return (mag_spec_cumsum, norm_val, sclrs, frst_term)
 
-    def _get_gnrc_ms_pair_ft(self, data, vtype, norm_vals, data_type):
+    def _get_ms_cross_pair_ft(self, mags_spec, phss_spec, vtype, data_type):
 
         '''
-        Pairwise cummulative correlation spectrum with phases.
+        Pairwise cross cummulative correlation spectrum with phases.
         '''
 
-        assert data.ndim == 2
-
-        data = data.copy(order='f')
+        assert mags_spec.ndim == 2
 
         assert self._data_ref_n_labels > 1, 'More than one label required!'
 
+        mags_spec = mags_spec[1:,:]
+        phss_spec = phss_spec[1:,:]
+
         max_comb_size = 2  # self._data_ref_n_labels
-
-        if vtype != 'ref':
-            assert norm_vals is not None, norm_vals
-
-            n_combs = int(
-                factorial(self._data_ref_n_labels) /
-                (factorial(max_comb_size) *
-                 factorial(self._data_ref_n_labels - max_comb_size)))
-
-            assert norm_vals.size == n_combs, (norm_vals.size, n_combs)
-
-        data_ft = np.fft.rfft(data, axis=0)[1:,:]
-
-        mag_spec = np.abs(data_ft)
-        phs_spec = np.angle(data_ft)
 
         if vtype == 'ref':
             norm_vals = []
-            pwr_spec_sum_sqrt = (mag_spec ** 2).sum(axis=0) ** 0.5
+            pwr_spec_sum_sqrt = (mags_spec ** 2).sum(axis=0) ** 0.5
 
         for comb_size in range(2, max_comb_size + 1):
             combs = combinations(self._data_ref_labels, comb_size)
@@ -213,7 +196,7 @@ class GTGPrepareTfms:
                 (factorial(comb_size) *
                  factorial(self._data_ref_n_labels - comb_size)))
 
-            pair_ft = np.empty(
+            pair_cumm_corrs = np.empty(
                 ((self._data_ref_shape[0] // 2), n_combs))
 
             for i, comb in enumerate(combs):
@@ -223,12 +206,13 @@ class GTGPrepareTfms:
                     raise NotImplementedError('Configured for pairs only!')
 
                 numr = (
-                    mag_spec[:, col_idxs[0]] *
-                    mag_spec[:, col_idxs[1]] *
-                    np.cos(phs_spec[:, col_idxs[0]] - phs_spec[:, col_idxs[1]])
+                    mags_spec[:, col_idxs[0]] *
+                    mags_spec[:, col_idxs[1]] *
+                    np.cos(phss_spec[:, col_idxs[0]] -
+                           phss_spec[:, col_idxs[1]])
                     )
 
-                pair_ft[:, i] = numr
+                pair_cumm_corrs[:, i] = numr
 
                 if vtype == 'ref':
                     demr = (
@@ -242,6 +226,13 @@ class GTGPrepareTfms:
         if vtype == 'ref':
             norm_vals = np.array(norm_vals).reshape(1, -1)
 
+            n_combs = int(
+                factorial(self._data_ref_n_labels) /
+                (factorial(max_comb_size) *
+                 factorial(self._data_ref_n_labels - max_comb_size)))
+
+            assert norm_vals.size == n_combs, (norm_vals.size, n_combs)
+
             if data_type == 'data':
                 self._rr.data_ms_pair_ft_norm_vals = norm_vals
 
@@ -252,72 +243,57 @@ class GTGPrepareTfms:
                 raise NotImplementedError
 
         elif vtype == 'sim':
-            pass
+            if data_type == 'data':
+                norm_vals = self._rr.data_ms_pair_ft_norm_vals
+
+            elif data_type == 'probs':
+                norm_vals = self._rr.probs_ms_pair_ft_norm_vals
+
+            else:
+                raise NotImplementedError
 
         else:
             raise NotImplementedError
 
-        pair_ft = np.cumsum(pair_ft, axis=0)
+        pair_cumm_corrs = np.cumsum(pair_cumm_corrs, axis=0)
 
-        pair_ft /= norm_vals
+        pair_cumm_corrs /= norm_vals
 
-        return pair_ft
+        return pair_cumm_corrs
 
-    def _get_data_ms_ft(self, data, vtype, norm_val):
+    def _get_ms_cross_cumm_corrs_ft(self, mags_spec, vtype, data_type):
 
         '''
-        Multivariate maximum correlation.
+        Multivariate cross cummulative maximum correlation.
         '''
 
-        assert data.ndim == 2
+        assert mags_spec.ndim == 2
 
-        data_ft = np.fft.rfft(data, axis=0)
-        data_mag_spec = np.abs(data_ft)[1:]
+        cumm_corrs = mags_spec.prod(axis=1).cumsum()
 
-        data_ms_ft = data_mag_spec.prod(axis=1).cumsum()
+        if (vtype == 'sim') and (data_type == 'data'):
+            norm_val = self._rr.data_ms_ft_norm_val
 
-        if (vtype == 'sim') and (norm_val is not None):
-            data_ms_ft /= norm_val
+        elif (vtype == 'sim') and (data_type == 'probs'):
+            norm_val = self._rr.probs_ms_ft_norm_val
 
-        elif (vtype == 'ref') and (norm_val is None):
-            self._rr.data_ms_ft_norm_val = (
-                (data_mag_spec ** data_ft.shape[1]).sum(axis=0).prod()
-                ) ** (1.0 / data_ft.shape[1])
+        elif vtype == 'ref':
+            norm_val = (
+                (cumm_corrs ** mags_spec.shape[1]).sum(axis=0).prod()
+                ) ** (1.0 / mags_spec.shape[1])
 
-            data_ms_ft /= self._rr.data_ms_ft_norm_val
+            if data_type == 'data':
+                self._rr.data_ms_ft_norm_val = norm_val
+
+            elif data_type == 'probs':
+                self._rr.probs_ms_ft_norm_val = norm_val
 
         else:
             raise NotImplementedError
 
-        return data_ms_ft
+        cumm_corrs /= norm_val
 
-    def _get_probs_ms_ft(self, probs, vtype, norm_val):
-
-        '''
-        Multivariate maximum correlation.
-        '''
-
-        assert probs.ndim == 2
-
-        probs_ft = np.fft.rfft(probs, axis=0)
-        probs_mag_spec = np.abs(probs_ft)[1:]
-
-        probs_ms_ft = probs_mag_spec.prod(axis=1).cumsum()
-
-        if (vtype == 'sim') and (norm_val is not None):
-            probs_ms_ft /= norm_val
-
-        elif (vtype == 'ref') and (norm_val is None):
-            self._rr.probs_ms_ft_norm_val = (
-                (probs_mag_spec ** probs_ft.shape[1]).sum(axis=0).prod()
-                ) ** (1.0 / probs_ft.shape[1])
-
-            probs_ms_ft /= self._rr.probs_ms_ft_norm_val
-
-        else:
-            raise NotImplementedError
-
-        return probs_ms_ft
+        return cumm_corrs
 
     def _get_gnrc_mult_ft(self, data, vtype, tfm_type):
 

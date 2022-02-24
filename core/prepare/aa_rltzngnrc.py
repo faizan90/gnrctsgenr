@@ -11,8 +11,8 @@ class GTGPrepareRltznGnrc:
 
         # Add var labs to _getdata in save.py if they need to be there.
 
-        self.label = None
-        self.probs = None
+        self.label = None  # Label of the simulation. Set automatically.
+        self.probs = None  # Non-exceedence probabilities of data points.
         self.ft = None  # FT coefficients of the transformed series.
         self.phs_spec = None  # Of the transformed series.
         self.mag_spec = None  # Of the transformed series.
@@ -30,8 +30,14 @@ class GTGPrepareRltznGnrc:
         self.ecop_etpy_ms = None  # Lumped, on a multivariate E. copula.
         self.data_ms_ft = None  # Actually, cumm_max_corr_spec.
         self.probs_ms_ft = None  # Actually, cumm_max_corr_spec.
-        self.data_ms_pair_ft = None
-        self.probs_ms_pair_ft = None
+        self.data_ms_pair_ft = None  # Multisite pairwise data cumm_corr_spec.
+        self.probs_ms_pair_ft = None  # Multisite pairwise data cumm_corr_spec.
+        self.data_ft_coeffs = None  # FT of the data.
+        self.data_ft_coeffs_mags = None  # Magnitudes of data_ft_coeffs.
+        self.data_ft_coeffs_phss = None  # Phases of data_ft_coeffs.
+        self.probs_ft_coeffs = None  # FT of the probs.
+        self.probs_ft_coeffs_mags = None  # Magnitudes of probs_ft_coeffs.
+        self.probs_ft_coeffs_phss = None  # Phases of probs_ft_coeffs.
 
         self.skip_io_vars = []  # Not to write in the main save function.
         return

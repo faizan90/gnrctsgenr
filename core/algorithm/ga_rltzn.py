@@ -177,6 +177,22 @@ class GTGAlgRealization:
 
         self._rs.data = self._alg_snapshot['data']
         self._rs.probs = self._alg_snapshot['probs']
+
+        self._rs.data_ft_coeffs = self._alg_snapshot['data_ft_coeffs']
+
+        self._rs.data_ft_coeffs_mags = self._alg_snapshot[
+            'data_ft_coeffs_mags']
+
+        self._rs.data_ft_coeffs_phss = self._alg_snapshot[
+            'data_ft_coeffs_phss']
+
+        self._rs.probs_ft_coeffs = self._alg_snapshot['probs_ft_coeffs']
+
+        self._rs.probs_ft_coeffs_mags = self._alg_snapshot[
+            'probs_ft_coeffs_mags']
+
+        self._rs.probs_ft_coeffs_phss = self._alg_snapshot[
+            'probs_ft_coeffs_phss']
         return
 
     def _update_snapshot(self):
@@ -221,13 +237,18 @@ class GTGAlgRealization:
 
             self._rs.data_ms_pair_ft,
             self._rs.probs_ms_pair_ft,
-
             )
 
         self._alg_snapshot = {
             'obj_vars': obj_vars,
             'data': self._rs.data,
             'probs': self._rs.probs,
+            'data_ft_coeffs': self._rs.data_ft_coeffs,
+            'data_ft_coeffs_mags': self._rs.data_ft_coeffs_mags,
+            'data_ft_coeffs_phss': self._rs.data_ft_coeffs_phss,
+            'probs_ft_coeffs': self._rs.probs_ft_coeffs,
+            'probs_ft_coeffs_mags': self._rs.probs_ft_coeffs_mags,
+            'probs_ft_coeffs_phss': self._rs.probs_ft_coeffs_phss,
             }
 
         return

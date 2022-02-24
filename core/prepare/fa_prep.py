@@ -77,6 +77,14 @@ class GTGPrepare:
         self._rr.phs_spec = phs_spec
         self._rr.mag_spec = mag_spec
 
+        self._rr.data_ft_coeffs = np.fft.rfft(self._data_ref_rltzn, axis=0)
+        self._rr.data_ft_coeffs_mags = np.abs(self._rr.data_ft_coeffs)
+        self._rr.data_ft_coeffs_phss = np.angle(self._rr.data_ft_coeffs)
+
+        self._rr.probs_ft_coeffs = np.fft.rfft(self._rr.probs, axis=0)
+        self._rr.probs_ft_coeffs_mags = np.abs(self._rr.probs_ft_coeffs)
+        self._rr.probs_ft_coeffs_phss = np.angle(self._rr.probs_ft_coeffs)
+
         self._update_obj_vars('ref')
 
         if self._sett_obj_use_obj_dist_flag:

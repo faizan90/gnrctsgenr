@@ -350,25 +350,15 @@ class GTGPrepareUpdate:
             mult_ecop_dens_diffs = None
 
         if self._sett_obj_match_data_ft_flag:
-            if vtype == 'sim':
-                data_ft_norm_vals = self._rr.data_ft_norm_vals
-
-            else:
-                data_ft_norm_vals = None
-
-            data_ft = self._get_data_ft(data, vtype, data_ft_norm_vals)
+            data_ft = self._get_auto_cumm_corrs_ft(
+                rltzn_cls.data_ft_coeffs_mags, vtype, 'data')
 
         else:
             data_ft = None
 
         if self._sett_obj_match_probs_ft_flag:
-            if vtype == 'sim':
-                probs_ft_norm_vals = self._rr.probs_ft_norm_vals
-
-            else:
-                probs_ft_norm_vals = None
-
-            probs_ft = self._get_probs_ft(probs, vtype, probs_ft_norm_vals)
+            probs_ft = self._get_auto_cumm_corrs_ft(
+                rltzn_cls.probs_ft_coeffs_mags, vtype, 'probs')
 
         else:
             probs_ft = None
@@ -489,53 +479,35 @@ class GTGPrepareUpdate:
             ecop_etpy_ms = None
 
         if self._sett_obj_match_data_ms_ft_flag:
-            if vtype == 'sim':
-                data_ms_ft_norm_val = self._rr.data_ms_ft_norm_val
-
-            else:
-                data_ms_ft_norm_val = None
-
-            data_ms_ft = self._get_data_ms_ft(data, vtype, data_ms_ft_norm_val)
+            data_ms_ft = self._get_ms_cross_cumm_corrs_ft(
+                rltzn_cls.data_ft_coeffs_mags, vtype, 'data')
 
         else:
             data_ms_ft = None
 
         if self._sett_obj_match_probs_ms_ft_flag:
-            if vtype == 'sim':
-                probs_ms_ft_norm_val = self._rr.probs_ms_ft_norm_val
-
-            else:
-                probs_ms_ft_norm_val = None
-
-            probs_ms_ft = self._get_probs_ms_ft(
-                probs, vtype, probs_ms_ft_norm_val)
+            probs_ms_ft = self._get_ms_cross_cumm_corrs_ft(
+                rltzn_cls.probs_ft_coeffs_mags, vtype, 'probs')
 
         else:
             probs_ms_ft = None
 
         if self._sett_obj_match_data_ms_pair_ft_flag:
-            if vtype == 'sim':
-                data_ms_pair_ft_norm_val = self._rr.data_ms_pair_ft_norm_vals
-
-            else:
-                data_ms_pair_ft_norm_val = None
-
-            data_ms_pair_ft = self._get_gnrc_ms_pair_ft(
-                data, vtype, data_ms_pair_ft_norm_val, 'data')
+            data_ms_pair_ft = self._get_ms_cross_pair_ft(
+                rltzn_cls.data_ft_coeffs_mags,
+                rltzn_cls.data_ft_coeffs_phss,
+                vtype,
+                'data')
 
         else:
             data_ms_pair_ft = None
 
         if self._sett_obj_match_probs_ms_pair_ft_flag:
-            if vtype == 'sim':
-                probs_ms_pair_ft_norm_val = self._rr.probs_ms_pair_ft_norm_vals
-
-            else:
-                probs_ms_pair_ft_norm_val = None
-
-            probs_ms_pair_ft = self._get_gnrc_ms_pair_ft(
-                probs, vtype, probs_ms_pair_ft_norm_val, 'probs')
-
+            probs_ms_pair_ft = self._get_ms_cross_pair_ft(
+                rltzn_cls.probs_ft_coeffs_mags,
+                rltzn_cls.probs_ft_coeffs_phss,
+                vtype,
+                'probs')
         else:
             probs_ms_pair_ft = None
 
