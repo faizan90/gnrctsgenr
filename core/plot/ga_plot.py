@@ -227,7 +227,8 @@ class GenericTimeSeriesGeneratorPlot:
 
                 ftns_args.extend([
                     (self._plot_cross_ecop_scatter, []),
-                    (self._plot_cross_ft_corrs, []),
+                    (self._plot_cross_ft_corrs, ('data',)),
+                    (self._plot_cross_ft_corrs, ('probs',)),
                     (self._plot_cross_ecop_denss, []),
                     (self._plot_cross_gnrc_cdfs, (
                         'mult_asymm_1_diffs', 'Numerator')),

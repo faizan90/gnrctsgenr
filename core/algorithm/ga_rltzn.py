@@ -170,6 +170,9 @@ class GTGAlgRealization:
          self._rs.data_ms_ft,
          self._rs.probs_ms_ft,
 
+         self._rs.data_ms_pair_ft,
+         self._rs.probs_ms_pair_ft,
+
         ) = self._alg_snapshot['obj_vars']
 
         self._rs.data = self._alg_snapshot['data']
@@ -215,6 +218,9 @@ class GTGAlgRealization:
 
             self._rs.data_ms_ft,
             self._rs.probs_ms_ft,
+
+            self._rs.data_ms_pair_ft,
+            self._rs.probs_ms_pair_ft,
 
             )
 

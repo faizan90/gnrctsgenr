@@ -930,36 +930,22 @@ class GTGPlotMultiSite:
         plt.close()
         return
 
-    @staticmethod
-    def _get_cross_ft_cumm_corr(data_a, data_b):
-
-        data_a_ft = np.fft.rfft(data_a)
-        data_a_phs = np.angle(data_a_ft)
-        data_a_mag = np.abs(data_a_ft)
-
-        data_b_ft = np.fft.rfft(data_b)
-        data_b_phs = np.angle(data_b_ft)
-        data_b_mag = np.abs(data_b_ft)
-
-        numr = (
-            data_a_mag[1:] *
-            data_b_mag[1:] *
-            np.cos(data_a_phs[1:] - data_b_phs[1:]))
-
-        demr = (
-            ((data_a_mag[1:] ** 2).sum() ** 0.5) *
-            ((data_b_mag[1:] ** 2).sum() ** 0.5))
-
-        ft_corr = np.cumsum(numr) / demr
-
-        assert np.isfinite(ft_corr[-1])
-        return ft_corr
-
-    def _plot_cross_ft_corrs(self):
+    def _plot_cross_ft_corrs(self, data_type):
 
         '''
         Meant for pairs right now.
         '''
+
+        assert data_type in ('data', 'probs'), data_type
+
+        if data_type == 'data':
+            data_type_label = 'data_ms_pair_ft'
+
+        elif data_type == 'probs':
+            data_type_label = 'probs_ms_pair_ft'
+
+        else:
+            raise NotImplementedError
 
         beg_tm = default_timer()
 
@@ -975,17 +961,17 @@ class GTGPlotMultiSite:
 
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
-        data_label_idx_combs = combinations(enumerate(data_labels), 2)
+        data_label_idx_combs = combinations(data_labels, 2)
 
         loop_prod = data_label_idx_combs
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
-        for ((di_a, dl_a), (di_b, dl_b)) in loop_prod:
+        comb_ctr = 0
+        for dl_a, dl_b in loop_prod:
 
-            ref_ft_cumm_corr = self._get_cross_ft_cumm_corr(
-                h5_hdl[f'data_ref_rltzn/data'][:, di_a],
-                h5_hdl[f'data_ref_rltzn/data'][:, di_b])
+            ref_ft_cumm_corr = h5_hdl[
+                f'data_ref_rltzn/{data_type_label}'][:, comb_ctr]
 
             ref_periods = (ref_ft_cumm_corr.size * 2) / (
                 np.arange(1, ref_ft_cumm_corr.size + 1))
@@ -1010,9 +996,8 @@ class GTGPlotMultiSite:
                 else:
                     label = None
 
-                sim_ft_cumm_corr = self._get_cross_ft_cumm_corr(
-                    sim_grp_main[f'{rltzn_lab}/data'][:, di_a],
-                    sim_grp_main[f'{rltzn_lab}/data'][:, di_b])
+                sim_ft_cumm_corr = sim_grp_main[
+                    f'{rltzn_lab}/{data_type_label}'][:, comb_ctr]
 
                 if sim_periods is None:
                     sim_periods = (sim_ft_cumm_corr.size * 2) / (
@@ -1042,11 +1027,13 @@ class GTGPlotMultiSite:
 
             plt.ylim(-1, +1)
 
-            out_name = f'ms__ft_cross_cumm_corrs_{dl_a}_{dl_b}.png'
+            out_name = f'ms__ft_cross_cumm_corrs_{data_type}_{dl_a}_{dl_b}.png'
 
             plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
 
             plt.close()
+
+            comb_ctr += 1
 
         h5_hdl.close()
 
@@ -1056,7 +1043,7 @@ class GTGPlotMultiSite:
 
         if self._vb:
             print(
-                f'Plotting multi-site cross FT correlations '
+                f'Plotting multi-site cross pair {data_type} FT correlations '
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 

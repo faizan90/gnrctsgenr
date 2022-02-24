@@ -76,7 +76,7 @@ class GTGAlgTemperature:
         if keep_idxs.sum() < poly_deg:
             poly_deg = keep_idxs.sum()
 
-        if (poly_deg % 2) and poly_deg > 2:
+        if (poly_deg % 2) and (poly_deg > 2):
             poly_deg -= 1
 
         poly_coeffs = np.polyfit(

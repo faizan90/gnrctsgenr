@@ -48,6 +48,8 @@ class GTGAlgMisc:
             self._sett_obj_etpy_ms_flag,
             self._sett_obj_match_data_ms_ft_flag,
             self._sett_obj_match_probs_ms_ft_flag,
+            self._sett_obj_match_data_ms_pair_ft_flag,
+            self._sett_obj_match_probs_ms_pair_ft_flag,
             )
 
         assert len(all_flags) == self._sett_obj_n_flags
@@ -84,6 +86,8 @@ class GTGAlgMisc:
          self._sett_obj_etpy_ms_flag,
          self._sett_obj_match_data_ms_ft_flag,
          self._sett_obj_match_probs_ms_ft_flag,
+            self._sett_obj_match_data_ms_pair_ft_flag,
+            self._sett_obj_match_probs_ms_pair_ft_flag,
          ) = ([state] * self._sett_obj_n_flags)
 
         if self._data_ref_n_labels == 1:
@@ -98,7 +102,9 @@ class GTGAlgMisc:
              self._sett_obj_etpy_ms_flag,
              self._sett_obj_match_data_ms_ft_flag,
              self._sett_obj_match_probs_ms_ft_flag,
-             ) = [False] * 10
+            self._sett_obj_match_data_ms_pair_ft_flag,
+            self._sett_obj_match_probs_ms_pair_ft_flag,
+             ) = [False] * 12
 
         return
 
@@ -135,6 +141,8 @@ class GTGAlgMisc:
          self._sett_obj_etpy_ms_flag,
          self._sett_obj_match_data_ms_ft_flag,
          self._sett_obj_match_probs_ms_ft_flag,
+         self._sett_obj_match_data_ms_pair_ft_flag,
+         self._sett_obj_match_probs_ms_pair_ft_flag,
          ) = states
 
         if self._data_ref_n_labels == 1:
@@ -149,7 +157,9 @@ class GTGAlgMisc:
              self._sett_obj_etpy_ms_flag,
              self._sett_obj_match_data_ms_ft_flag,
              self._sett_obj_match_probs_ms_ft_flag,
-             ) = [False] * 10
+             self._sett_obj_match_data_ms_pair_ft_flag,
+             self._sett_obj_match_probs_ms_pair_ft_flag,
+             ) = [False] * 12
 
         assert len(states) == self._sett_obj_n_flags
 

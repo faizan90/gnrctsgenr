@@ -30,6 +30,8 @@ class GTGPrepareRltznGnrc:
         self.ecop_etpy_ms = None  # Lumped, on a multivariate E. copula.
         self.data_ms_ft = None  # Actually, cumm_max_corr_spec.
         self.probs_ms_ft = None  # Actually, cumm_max_corr_spec.
+        self.data_ms_pair_ft = None
+        self.probs_ms_pair_ft = None
 
         self.skip_io_vars = []  # Not to write in the main save function.
         return

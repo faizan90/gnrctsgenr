@@ -172,6 +172,97 @@ class GTGPrepareTfms:
 
         return (mag_spec_cumsum, norm_val, sclrs, frst_term)
 
+    def _get_gnrc_ms_pair_ft(self, data, vtype, norm_vals, data_type):
+
+        '''
+        Pairwise cummulative correlation spectrum with phases.
+        '''
+
+        assert data.ndim == 2
+
+        data = data.copy(order='f')
+
+        assert self._data_ref_n_labels > 1, 'More than one label required!'
+
+        max_comb_size = 2  # self._data_ref_n_labels
+
+        if vtype != 'ref':
+            assert norm_vals is not None, norm_vals
+
+            n_combs = int(
+                factorial(self._data_ref_n_labels) /
+                (factorial(max_comb_size) *
+                 factorial(self._data_ref_n_labels - max_comb_size)))
+
+            assert norm_vals.size == n_combs, (norm_vals.size, n_combs)
+
+        data_ft = np.fft.rfft(data, axis=0)[1:,:]
+
+        mag_spec = np.abs(data_ft)
+        phs_spec = np.angle(data_ft)
+
+        if vtype == 'ref':
+            norm_vals = []
+            pwr_spec_sum_sqrt = (mag_spec ** 2).sum(axis=0) ** 0.5
+
+        for comb_size in range(2, max_comb_size + 1):
+            combs = combinations(self._data_ref_labels, comb_size)
+
+            n_combs = int(
+                factorial(self._data_ref_n_labels) /
+                (factorial(comb_size) *
+                 factorial(self._data_ref_n_labels - comb_size)))
+
+            pair_ft = np.empty(
+                ((self._data_ref_shape[0] // 2), n_combs))
+
+            for i, comb in enumerate(combs):
+                col_idxs = [self._data_ref_labels.index(col) for col in comb]
+
+                if len(comb) != 2:
+                    raise NotImplementedError('Configured for pairs only!')
+
+                numr = (
+                    mag_spec[:, col_idxs[0]] *
+                    mag_spec[:, col_idxs[1]] *
+                    np.cos(phs_spec[:, col_idxs[0]] - phs_spec[:, col_idxs[1]])
+                    )
+
+                pair_ft[:, i] = numr
+
+                if vtype == 'ref':
+                    demr = (
+                        pwr_spec_sum_sqrt[col_idxs[0]] *
+                        pwr_spec_sum_sqrt[col_idxs[1]])
+
+                    norm_vals.append(demr)
+
+            break  # Should only happen once due to the pair comb case.
+
+        if vtype == 'ref':
+            norm_vals = np.array(norm_vals).reshape(1, -1)
+
+            if data_type == 'data':
+                self._rr.data_ms_pair_ft_norm_vals = norm_vals
+
+            elif data_type == 'probs':
+                self._rr.probs_ms_pair_ft_norm_vals = norm_vals
+
+            else:
+                raise NotImplementedError
+
+        elif vtype == 'sim':
+            pass
+
+        else:
+            raise NotImplementedError
+
+        pair_ft = np.cumsum(pair_ft, axis=0)
+
+        pair_ft /= norm_vals
+
+        return pair_ft
+
     def _get_data_ms_ft(self, data, vtype, norm_val):
 
         '''

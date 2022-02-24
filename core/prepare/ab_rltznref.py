@@ -57,4 +57,7 @@ class GTGPrepareRltznRef(GTGRG):
 
         self.data_ms_ft_norm_val = None  # Multivariate norming value for max_corr.
         self.probs_ms_ft_norm_val = None  # Multivariate norming value for max_corr.
+
+        self.data_ms_pair_ft_norm_vals = None  # Bivariate norming value for pairwise FT.
+        self.probs_ms_pair_ft_norm_vals = None  # Bivariate norming value for pairwise FT.
         return
