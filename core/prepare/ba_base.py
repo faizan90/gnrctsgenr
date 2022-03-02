@@ -9,10 +9,6 @@ class GTGPrepareBase:
 
     def __init__(self):
 
-        self._data_tfm_type = 'probs'
-        self._data_tfm_types = (
-            'log_data', 'probs', 'data', 'probs_sqrt', 'norm')
-
         # Flags.
         self._prep_ref_aux_flag = False
         self._prep_sim_aux_flag = False

@@ -23,28 +23,26 @@ class GTGPrepare:
 
     def _get_data_tfm(self, data, probs):
 
-        assert self._data_tfm_type in self._data_tfm_types, (
-            f'Unknown data transform string {self._data_tfm_type}!')
+        assert self._sett_data_tfm_type in self._sett_data_tfm_types, (
+            f'Unknown data transform string {self._sett_data_tfm_type}!')
 
-        if self._data_tfm_type == 'log_data':
+        if self._sett_data_tfm_type == 'log_data':
             data_tfm = np.log(data)
 
-        elif self._data_tfm_type == 'probs':
+        elif self._sett_data_tfm_type == 'probs':
             data_tfm = probs.copy()
 
-        elif self._data_tfm_type == 'data':
+        elif self._sett_data_tfm_type == 'data':
             data_tfm = data.copy()
 
-        elif self._data_tfm_type == 'probs_sqrt':
+        elif self._sett_data_tfm_type == 'probs_sqrt':
             data_tfm = probs ** 0.5
 
-        elif self._data_tfm_type == 'norm':
+        elif self._sett_data_tfm_type == 'norm':
             data_tfm = norm.ppf(probs)
 
         else:
-            raise NotImplementedError(
-                f'_data_tfm_type can only be from: '
-                f'{self._data_tfm_types}!')
+            raise NotImplementedError()
 
         assert np.all(np.isfinite(data_tfm)), 'Invalid values in data_tfm!'
 

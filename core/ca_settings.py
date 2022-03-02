@@ -146,6 +146,11 @@ class GTGSettings:
         self._sett_prt_cdf_calib_ut = None
         self._sett_prt_cdf_calib_inside_flag = None
 
+        # Data transforms to use internally.
+        self._sett_data_tfm_type = None
+        self._sett_data_tfm_types = (
+            'log_data', 'probs', 'data', 'probs_sqrt', 'norm')
+
         # Misc.
         self._sett_misc_n_rltzns = None
         self._sett_misc_outs_dir = None
@@ -161,6 +166,7 @@ class GTGSettings:
         self._sett_wts_label_set_flag = False
         self._sett_cdf_pnlt_set_flag = False
         self._sett_prt_cdf_calib_set_flag = False
+        self._sett_data_tfm_set_flag = False
         self._sett_misc_set_flag = False
 
         self._sett_verify_flag = False
@@ -1504,6 +1510,51 @@ class GTGSettings:
         self._sett_prt_cdf_calib_set_flag = True
         return
 
+    def set_internal_data_transform_to_use_settings(self, transform_type):
+
+        f'''
+        Input data can be transformed to other distributions is desired.
+        This has an effect on the final properties of the simulated series.
+        For example, if each value in each series in the input data is
+        transformed to its non-exceedence probability then the
+        phase randomized series keep the spearman correlations better but
+        the pearsons get worse. Each transform can be tested to see what
+        sort of properites the initial series have after phase randomization.
+        Some properties can be obtained easily with certain transforms.
+        Depends on data. In my experience, transform of 'probs' works the best.
+
+        Parameters
+        ----------
+        transform_type : str
+            The type of transform to apply to the input data. Can be one of
+            {self._sett_data_tfm_types}. For the transform 'data', the actual
+            data is used.
+        '''
+
+        if self._vb:
+            print_sl()
+
+            print(
+                'Setting internal data transform settings...\n')
+
+        assert isinstance(transform_type, str), 'transform_type not a string!'
+
+        assert transform_type in self._sett_data_tfm_types, (
+            f'Invalid transform_type!\n'
+            f'Can only be one of {self._sett_data_tfm_types}.')
+
+        self._sett_data_tfm_type = transform_type
+
+        if self._vb:
+            print(
+                'Internal data transform to use:',
+                self._sett_data_tfm_type)
+
+            print_el()
+
+        self._sett_data_tfm_set_flag = True
+        return
+
     def set_misc_settings(self, n_rltzns, outputs_dir, n_cpus):
 
         '''
@@ -1579,6 +1630,10 @@ class GTGSettings:
 
         assert self._sett_obj_set_flag, 'Call set_objective_settings first!'
         assert self._sett_ann_set_flag, 'Call set_annealing_settings first!'
+
+        assert self._sett_data_tfm_set_flag, (
+            'Call set_internal_data_transform_to_use_settings first!')
+
         assert self._sett_misc_set_flag, 'Call set_misc_settings first!'
 
         if self._data_ref_rltzn.ndim != 2:
