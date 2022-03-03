@@ -75,13 +75,21 @@ class GTGPrepare:
         self._rr.phs_spec = phs_spec
         self._rr.mag_spec = mag_spec
 
-        self._rr.data_ft_coeffs = np.fft.rfft(self._data_ref_rltzn, axis=0)
-        self._rr.data_ft_coeffs_mags = np.abs(self._rr.data_ft_coeffs)
-        self._rr.data_ft_coeffs_phss = np.angle(self._rr.data_ft_coeffs)
+        if any([self._sett_obj_match_data_ft_flag,
+                self._sett_obj_match_data_ms_ft_flag,
+                self._sett_obj_match_data_ms_pair_ft_flag]):
 
-        self._rr.probs_ft_coeffs = np.fft.rfft(self._rr.probs, axis=0)
-        self._rr.probs_ft_coeffs_mags = np.abs(self._rr.probs_ft_coeffs)
-        self._rr.probs_ft_coeffs_phss = np.angle(self._rr.probs_ft_coeffs)
+            self._rr.data_ft_coeffs = np.fft.rfft(self._data_ref_rltzn, axis=0)
+            self._rr.data_ft_coeffs_mags = np.abs(self._rr.data_ft_coeffs)
+            self._rr.data_ft_coeffs_phss = np.angle(self._rr.data_ft_coeffs)
+
+        if any([self._sett_obj_match_probs_ft_flag,
+                self._sett_obj_match_probs_ms_ft_flag,
+                self._sett_obj_match_probs_ms_pair_ft_flag]):
+
+            self._rr.probs_ft_coeffs = np.fft.rfft(self._rr.probs, axis=0)
+            self._rr.probs_ft_coeffs_mags = np.abs(self._rr.probs_ft_coeffs)
+            self._rr.probs_ft_coeffs_phss = np.angle(self._rr.probs_ft_coeffs)
 
         self._update_obj_vars('ref')
 
@@ -133,33 +141,35 @@ class GTGPrepare:
                 self._get_etpy_ft_dict(self._rr.probs))
 
         if self._data_ref_n_labels > 1:
-            # NOTE: don't add flags here
-            self._rr.mult_asymm_1_diffs_cdfs_dict = (
-                self._get_mult_asymm_1_diffs_cdfs_dict(self._rr.probs))
+            if self._sett_obj_asymm_type_1_ms_flag:
+                self._rr.mult_asymm_1_diffs_cdfs_dict = (
+                    self._get_mult_asymm_1_diffs_cdfs_dict(self._rr.probs))
 
-            self._rr.mult_asymm_2_diffs_cdfs_dict = (
-                self._get_mult_asymm_2_diffs_cdfs_dict(self._rr.probs))
+            if self._sett_obj_asymm_type_2_ms_flag:
+                self._rr.mult_asymm_2_diffs_cdfs_dict = (
+                    self._get_mult_asymm_2_diffs_cdfs_dict(self._rr.probs))
 
-            self._rr.mult_ecop_dens_cdfs_dict = (
-                self._get_mult_ecop_dens_diffs_cdfs_dict(self._rr.probs))
+            if self._sett_obj_ecop_dens_ms_flag:
+                self._rr.mult_ecop_dens_cdfs_dict = (
+                    self._get_mult_ecop_dens_diffs_cdfs_dict(self._rr.probs))
 
-            self._rr.mult_asymm_1_cmpos_ft_dict = (
-                self._get_mult_asymm_1_cmpos_ft(self._rr.probs, 'ref'))
+            if self._sett_obj_asymm_type_1_ft_flag:
+                self._rr.mult_asymm_1_cmpos_ft_dict = (
+                    self._get_mult_asymm_1_cmpos_ft(self._rr.probs, 'ref'))
 
-            self._rr.mult_asymm_2_cmpos_ft_dict = (
-                self._get_mult_asymm_2_cmpos_ft(self._rr.probs, 'ref'))
+            if self._sett_obj_asymm_type_2_ft_flag:
+                self._rr.mult_asymm_2_cmpos_ft_dict = (
+                    self._get_mult_asymm_2_cmpos_ft(self._rr.probs, 'ref'))
 
-            self._rr.mult_etpy_cmpos_ft_dict = (
-                self._get_mult_etpy_cmpos_ft(self._rr.probs, 'ref'))
+            if self._sett_obj_etpy_ft_flag:
+                self._rr.mult_etpy_cmpos_ft_dict = (
+                    self._get_mult_etpy_cmpos_ft(self._rr.probs, 'ref'))
 
 #             self._get_mult_scorr_cmpos_ft(self._rr.probs, 'ref')
 
         if self._sett_obj_cos_sin_dist_flag:
             self._rr.cos_sin_cdfs_dict = self._get_cos_sin_cdfs_dict(
                 self._rr.ft)
-
-        self._rr.ft_cumm_corr = self._get_cumm_ft_corr(
-            self._rr.ft, self._rr.ft)
 
         return
 

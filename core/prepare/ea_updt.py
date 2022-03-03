@@ -319,7 +319,8 @@ class GTGPrepareUpdate:
             nth_ord_diffs = None
             nths = None
 
-        if ((vtype == 'sim') and
+        if (self._sett_obj_asymm_type_1_ms_flag and
+            (vtype == 'sim') and
             (self._rr.mult_asymm_1_diffs_cdfs_dict is not None)):
 
             mult_asymm_1_diffs = {}
@@ -327,7 +328,8 @@ class GTGPrepareUpdate:
         else:
             mult_asymm_1_diffs = None
 
-        if ((vtype == 'sim') and
+        if (self._sett_obj_asymm_type_2_ms_flag and
+            (vtype == 'sim') and
             (self._rr.mult_asymm_2_diffs_cdfs_dict is not None)):
 
             mult_asymm_2_diffs = {}
@@ -335,7 +337,8 @@ class GTGPrepareUpdate:
         else:
             mult_asymm_2_diffs = None
 
-        if ((vtype == 'sim') and
+        if (self._sett_obj_ecop_dens_ms_flag and
+            (vtype == 'sim') and
             (self._rr.mult_ecop_dens_cdfs_dict is not None)):
 
             mult_ecop_dens_arr = np.full(

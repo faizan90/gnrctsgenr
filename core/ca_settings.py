@@ -47,8 +47,8 @@ class GTGSettings:
         self._sett_obj_ecop_dens_ms_flag = None
         self._sett_obj_match_data_ft_flag = None
         self._sett_obj_match_probs_ft_flag = None
-        self._sett_obj_asymm_type_2_ft_flag = None
         self._sett_obj_asymm_type_1_ft_flag = None
+        self._sett_obj_asymm_type_2_ft_flag = None
         self._sett_obj_nth_ord_diffs_ft_flag = None
         self._sett_obj_asymm_type_1_ms_ft_flag = None
         self._sett_obj_asymm_type_2_ms_ft_flag = None
