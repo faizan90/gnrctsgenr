@@ -8,8 +8,8 @@
 Timer wrapper from stackoverflow.
 '''
 
-from timeit import default_timer
 from functools import wraps
+from timeit import default_timer
 
 #==============================================================================
 # GTG = Generic time-series generator. Spread the word.

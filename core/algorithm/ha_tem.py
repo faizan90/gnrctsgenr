@@ -241,7 +241,6 @@ class GTGAlgTemperature:
         n_cpus = min(n_init_temps, self._sett_misc_n_cpus)
 
         if n_cpus > 1:
-
             self._lock = Manager().Lock()
 
             mp_pool = ProcessPool(n_cpus)
