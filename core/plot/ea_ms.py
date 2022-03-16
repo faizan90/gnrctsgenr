@@ -37,7 +37,13 @@ class GTGPlotMultiSite:
 
         return
 
-    def _plot_cmpr_probs_ms_ft(self):
+    def _plot_cmpr_gnrc_ms_cumm_ft(self, var_label):
+
+        '''
+        Maximum FT cross correlation.
+        '''
+
+        assert var_label in ('data', 'probs'), var_label
 
         beg_tm = default_timer()
 
@@ -55,16 +61,16 @@ class GTGPlotMultiSite:
 
         ref_grp = h5_hdl[f'data_ref_rltzn']
 
-        ref_probs_ft = ref_grp['probs_ms_ft'][...]
+        ref_var_ft = ref_grp[f'{var_label}_ms_ft'][...]
 
-        ref_periods = (ref_probs_ft.size * 2) / (
-            np.arange(1, ref_probs_ft.size + 1))
+        ref_periods = (ref_var_ft.size * 2) / (
+            np.arange(1, ref_var_ft.size + 1))
 
         plt.figure()
 
         plt.semilogx(
             ref_periods,
-            ref_probs_ft,
+            ref_var_ft,
             alpha=plt_sett.alpha_2,
             color=plt_sett.lc_2,
             lw=plt_sett.lw_2,
@@ -79,16 +85,16 @@ class GTGPlotMultiSite:
             else:
                 label = None
 
-            sim_probs_ft = sim_grp_main[
-                f'{rltzn_lab}/probs_ms_ft'][...]
+            sim_var_ft = sim_grp_main[
+                f'{rltzn_lab}/{var_label}_ms_ft'][...]
 
             if sim_periods is None:
-                sim_periods = (sim_probs_ft.size * 2) / (
-                    np.arange(1, sim_probs_ft.size + 1))
+                sim_periods = (sim_var_ft.size * 2) / (
+                    np.arange(1, sim_var_ft.size + 1))
 
             plt.semilogx(
                 sim_periods,
-                sim_probs_ft,
+                sim_var_ft,
                 alpha=plt_sett.alpha_1,
                 color=plt_sett.lc_1,
                 lw=plt_sett.lw_1,
@@ -102,13 +108,13 @@ class GTGPlotMultiSite:
 
         plt.legend(framealpha=0.7)
 
-        plt.ylabel('Cummulative probs FT correlation')
+        plt.ylabel(f'Cummulative {var_label} FT correlation')
 
         plt.xlabel(f'Period (steps)')
 
         plt.xlim(plt.xlim()[::-1])
 
-        out_name = f'ms__probs_ms_ft.png'
+        out_name = f'ms__{var_label}_ms_ft.png'
 
         plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
 
@@ -122,98 +128,187 @@ class GTGPlotMultiSite:
 
         if self._vb:
             print(
-                f'Plotting multisite-site probs FT '
+                f'Plotting multisite-site {var_label} FT '
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
-    def _plot_cmpr_data_ms_ft(self):
-
-        beg_tm = default_timer()
-
-        h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
-
-        plt_sett = self._plt_sett_ft_corrs
-
-        new_mpl_prms = plt_sett.prms_dict
-
-        old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
-
-        set_mpl_prms(new_mpl_prms)
-
-        sim_grp_main = h5_hdl['data_sim_rltzns']
-
-        ref_grp = h5_hdl[f'data_ref_rltzn']
-
-        ref_data_ft = ref_grp['data_ms_ft'][...]
-
-        ref_periods = (ref_data_ft.size * 2) / (
-            np.arange(1, ref_data_ft.size + 1))
-
-        plt.figure()
-
-        plt.semilogx(
-            ref_periods,
-            ref_data_ft,
-            alpha=plt_sett.alpha_2,
-            color=plt_sett.lc_2,
-            lw=plt_sett.lw_2,
-            label='ref')
-
-        sim_periods = None
-        leg_flag = True
-        for rltzn_lab in sim_grp_main:
-            if leg_flag:
-                label = 'sim'
-
-            else:
-                label = None
-
-            sim_data_ft = sim_grp_main[
-                f'{rltzn_lab}/data_ms_ft'][...]
-
-            if sim_periods is None:
-                sim_periods = (sim_data_ft.size * 2) / (
-                    np.arange(1, sim_data_ft.size + 1))
-
-            plt.semilogx(
-                sim_periods,
-                sim_data_ft,
-                alpha=plt_sett.alpha_1,
-                color=plt_sett.lc_1,
-                lw=plt_sett.lw_1,
-                label=label)
-
-            leg_flag = False
-
-        plt.grid()
-
-        plt.gca().set_axisbelow(True)
-
-        plt.legend(framealpha=0.7)
-
-        plt.ylabel('Cummulative data FT correlation')
-
-        plt.xlabel(f'Period (steps)')
-
-        plt.xlim(plt.xlim()[::-1])
-
-        out_name = f'ms__data_ms_ft.png'
-
-        plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
-
-        plt.close()
-
-        h5_hdl.close()
-
-        set_mpl_prms(old_mpl_prms)
-
-        end_tm = default_timer()
-
-        if self._vb:
-            print(
-                f'Plotting multisite-site data FT '
-                f'took {end_tm - beg_tm:0.2f} seconds.')
-        return
+    # def _plot_cmpr_probs_ms_ft(self):
+    #
+    #     beg_tm = default_timer()
+    #
+    #     h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
+    #
+    #     plt_sett = self._plt_sett_ft_corrs
+    #
+    #     new_mpl_prms = plt_sett.prms_dict
+    #
+    #     old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
+    #
+    #     set_mpl_prms(new_mpl_prms)
+    #
+    #     sim_grp_main = h5_hdl['data_sim_rltzns']
+    #
+    #     ref_grp = h5_hdl[f'data_ref_rltzn']
+    #
+    #     ref_probs_ft = ref_grp['probs_ms_ft'][...]
+    #
+    #     ref_periods = (ref_probs_ft.size * 2) / (
+    #         np.arange(1, ref_probs_ft.size + 1))
+    #
+    #     plt.figure()
+    #
+    #     plt.semilogx(
+    #         ref_periods,
+    #         ref_probs_ft,
+    #         alpha=plt_sett.alpha_2,
+    #         color=plt_sett.lc_2,
+    #         lw=plt_sett.lw_2,
+    #         label='ref')
+    #
+    #     sim_periods = None
+    #     leg_flag = True
+    #     for rltzn_lab in sim_grp_main:
+    #         if leg_flag:
+    #             label = 'sim'
+    #
+    #         else:
+    #             label = None
+    #
+    #         sim_probs_ft = sim_grp_main[
+    #             f'{rltzn_lab}/probs_ms_ft'][...]
+    #
+    #         if sim_periods is None:
+    #             sim_periods = (sim_probs_ft.size * 2) / (
+    #                 np.arange(1, sim_probs_ft.size + 1))
+    #
+    #         plt.semilogx(
+    #             sim_periods,
+    #             sim_probs_ft,
+    #             alpha=plt_sett.alpha_1,
+    #             color=plt_sett.lc_1,
+    #             lw=plt_sett.lw_1,
+    #             label=label)
+    #
+    #         leg_flag = False
+    #
+    #     plt.grid()
+    #
+    #     plt.gca().set_axisbelow(True)
+    #
+    #     plt.legend(framealpha=0.7)
+    #
+    #     plt.ylabel('Cummulative probs FT correlation')
+    #
+    #     plt.xlabel(f'Period (steps)')
+    #
+    #     plt.xlim(plt.xlim()[::-1])
+    #
+    #     out_name = f'ms__probs_ms_ft.png'
+    #
+    #     plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
+    #
+    #     plt.close()
+    #
+    #     h5_hdl.close()
+    #
+    #     set_mpl_prms(old_mpl_prms)
+    #
+    #     end_tm = default_timer()
+    #
+    #     if self._vb:
+    #         print(
+    #             f'Plotting multisite-site probs FT '
+    #             f'took {end_tm - beg_tm:0.2f} seconds.')
+    #     return
+    #
+    # def _plot_cmpr_data_ms_ft(self):
+    #
+    #     beg_tm = default_timer()
+    #
+    #     h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
+    #
+    #     plt_sett = self._plt_sett_ft_corrs
+    #
+    #     new_mpl_prms = plt_sett.prms_dict
+    #
+    #     old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
+    #
+    #     set_mpl_prms(new_mpl_prms)
+    #
+    #     sim_grp_main = h5_hdl['data_sim_rltzns']
+    #
+    #     ref_grp = h5_hdl[f'data_ref_rltzn']
+    #
+    #     ref_data_ft = ref_grp['data_ms_ft'][...]
+    #
+    #     ref_periods = (ref_data_ft.size * 2) / (
+    #         np.arange(1, ref_data_ft.size + 1))
+    #
+    #     plt.figure()
+    #
+    #     plt.semilogx(
+    #         ref_periods,
+    #         ref_data_ft,
+    #         alpha=plt_sett.alpha_2,
+    #         color=plt_sett.lc_2,
+    #         lw=plt_sett.lw_2,
+    #         label='ref')
+    #
+    #     sim_periods = None
+    #     leg_flag = True
+    #     for rltzn_lab in sim_grp_main:
+    #         if leg_flag:
+    #             label = 'sim'
+    #
+    #         else:
+    #             label = None
+    #
+    #         sim_data_ft = sim_grp_main[
+    #             f'{rltzn_lab}/data_ms_ft'][...]
+    #
+    #         if sim_periods is None:
+    #             sim_periods = (sim_data_ft.size * 2) / (
+    #                 np.arange(1, sim_data_ft.size + 1))
+    #
+    #         plt.semilogx(
+    #             sim_periods,
+    #             sim_data_ft,
+    #             alpha=plt_sett.alpha_1,
+    #             color=plt_sett.lc_1,
+    #             lw=plt_sett.lw_1,
+    #             label=label)
+    #
+    #         leg_flag = False
+    #
+    #     plt.grid()
+    #
+    #     plt.gca().set_axisbelow(True)
+    #
+    #     plt.legend(framealpha=0.7)
+    #
+    #     plt.ylabel('Cummulative data FT correlation')
+    #
+    #     plt.xlabel(f'Period (steps)')
+    #
+    #     plt.xlim(plt.xlim()[::-1])
+    #
+    #     out_name = f'ms__data_ms_ft.png'
+    #
+    #     plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
+    #
+    #     plt.close()
+    #
+    #     h5_hdl.close()
+    #
+    #     set_mpl_prms(old_mpl_prms)
+    #
+    #     end_tm = default_timer()
+    #
+    #     if self._vb:
+    #         print(
+    #             f'Plotting multisite-site data FT '
+    #             f'took {end_tm - beg_tm:0.2f} seconds.')
+    #     return
 
     def _plot_cmpr_nD_vars(self):
 
@@ -406,7 +501,7 @@ class GTGPlotMultiSite:
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
-    def _plot_cmpr_cross_cmpos_ft(self, var_label):
+    def _plot_cmpr_gnrc_cross_cmpos_ft(self, var_label):
 
         beg_tm = default_timer()
 

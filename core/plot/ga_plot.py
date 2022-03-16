@@ -237,12 +237,12 @@ class GenericTimeSeriesGeneratorPlot:
                     (self._plot_cross_gnrc_cdfs, (
                         'mult_ecop_dens', 'Numerator')),
                     (self._plot_cross_ecop_denss_cntmnt, []),
-                    (self._plot_cmpr_cross_cmpos_ft, ('asymm_1',)),
-                    (self._plot_cmpr_cross_cmpos_ft, ('asymm_2',)),
-                    (self._plot_cmpr_cross_cmpos_ft, ('etpy',)),
+                    (self._plot_cmpr_gnrc_cross_cmpos_ft, ('asymm_1',)),
+                    (self._plot_cmpr_gnrc_cross_cmpos_ft, ('asymm_2',)),
+                    (self._plot_cmpr_gnrc_cross_cmpos_ft, ('etpy',)),
                     (self._plot_cmpr_nD_vars, []),
-                    (self._plot_cmpr_data_ms_ft, []),
-                    (self._plot_cmpr_probs_ms_ft, []),
+                    (self._plot_cmpr_gnrc_ms_cumm_ft, ('data',)),
+                    (self._plot_cmpr_gnrc_ms_cumm_ft, ('probs',)),
                     ])
 
             else:
