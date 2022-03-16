@@ -62,7 +62,8 @@ class GTGPlotOSV:
                     i,
                     times_grp.attrs[lab],
                     alpha=plt_sett.alpha_1,
-                    color=plt_sett.lc_1)
+                    color=plt_sett.lc_1,
+                    edgecolors='none',)
 
             # No. calls
             plt.figure(n_calls_fig.number)
@@ -71,7 +72,8 @@ class GTGPlotOSV:
                     i,
                     n_calls_grp.attrs[lab],
                     alpha=plt_sett.alpha_1,
-                    color=plt_sett.lc_1)
+                    color=plt_sett.lc_1,
+                    edgecolors='none',)
 
         # Times
         plt.figure(call_times_fig.number)

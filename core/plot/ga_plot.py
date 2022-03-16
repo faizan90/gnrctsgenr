@@ -196,7 +196,7 @@ class GenericTimeSeriesGeneratorPlot:
                 (self._plot_mag_cos_sin_cdfs_base, (np.sin, 'sin', 'sine')),
                 (self._plot_ts_probs, []),
                 (self._plot_phs_cdfs, []),
-                # (self._plot_cmpr_ecop_scatter, []),
+                (self._plot_cmpr_ecop_scatter, []),
                 # (self._plot_cmpr_ecop_denss, []),
                 (self._plot_gnrc_cdfs_cmpr, ('scorr', 'Numerator')),
                 (self._plot_gnrc_cdfs_cmpr, ('asymm_1', 'Numerator')),
@@ -243,6 +243,8 @@ class GenericTimeSeriesGeneratorPlot:
                     (self._plot_cmpr_nD_vars, []),
                     (self._plot_cmpr_gnrc_ms_cumm_ft, ('data',)),
                     (self._plot_cmpr_gnrc_ms_cumm_ft, ('probs',)),
+                    (self._plot_cross_gnrc_pair_corrs, ('pearson', [-1, 0, +1])),
+                    (self._plot_cross_gnrc_pair_corrs, ('spearman', [-1, 0, +1])),
                     ])
 
             else:

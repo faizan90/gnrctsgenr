@@ -147,3 +147,62 @@ def get_local_entropy_ts_cy(probs_x, probs_y, n_bins):
         bins_dens_xy)
 
     return lcl_etpy_ts
+
+
+def get_pair_corr(x, y, corr_type):
+
+    assert isinstance(x, np.ndarray), type(x)
+    assert isinstance(y, np.ndarray), type(y)
+
+    assert x.ndim == 1, x.ndim
+    assert y.ndim == 1, y.ndim
+
+    assert x.size == y.size, (x.size, y.size)
+
+    assert corr_type in ('pearson', 'spearman'), corr_type
+
+    if corr_type == 'pearson':
+        corr = np.corrcoef(x, y)[0, 1]
+
+    elif corr_type == 'spearman':
+        xr = rankdata(x)
+        yr = rankdata(y)
+
+        corr = np.corrcoef(xr, yr)[0, 1]
+
+    else:
+        raise NotImplementedError(corr_type)
+
+    return corr
+
+
+def get_lagged_pair_corrs_dict(data, corr_type, lags):
+
+    assert data.ndim == 2, data.ndim
+
+    lag_corrs_dict = {}
+
+    for lag in lags:
+
+        assert isinstance(lag, int), type(lag)
+        # All values above the diagonal.
+        corrs = []
+        for i in range(data.shape[1]):
+            arr_i = data[:, i].copy()
+
+            for j in range(i + 1, data.shape[1]):
+                arr_j = data[:, j].copy()
+
+                arr_i_lag, arr_j_lag = roll_real_2arrs(arr_i, arr_j, lag)
+
+                assert arr_i_lag.size > 0
+                assert arr_j_lag.size > 0
+
+                corr = get_pair_corr(arr_i_lag, arr_j_lag, corr_type)
+
+                corrs.append(corr)
+
+        lag_corrs_dict[lag] = np.array(corrs)
+
+    return lag_corrs_dict
+

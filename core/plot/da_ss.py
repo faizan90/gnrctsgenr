@@ -1280,6 +1280,7 @@ class GTGPlotSingleSite:
                 ref_grp['scorrs'][data_lab_idx, opt_idxs_steps[:, 0]],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+                edgecolors='none',
                 s=plt_sett.lw_2 * opt_scatt_size_scale)
 
             axes[1, 0].plot(
@@ -1287,6 +1288,7 @@ class GTGPlotSingleSite:
                 ref_grp['asymms_1'][data_lab_idx,:],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+
                 lw=plt_sett.lw_2,
                 label='ref')
 
@@ -1295,6 +1297,7 @@ class GTGPlotSingleSite:
                 ref_grp['asymms_1'][data_lab_idx, opt_idxs_steps[:, 0]],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+                edgecolors='none',
                 s=plt_sett.lw_2 * opt_scatt_size_scale)
 
             axes[1, 1].plot(
@@ -1310,6 +1313,7 @@ class GTGPlotSingleSite:
                 ref_grp['asymms_2'][data_lab_idx, opt_idxs_steps[:, 0]],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+                edgecolors='none',
                 s=plt_sett.lw_2 * opt_scatt_size_scale)
 
             axes[0, 1].plot(
@@ -1325,6 +1329,7 @@ class GTGPlotSingleSite:
                 ref_grp['ecop_etpy'][data_lab_idx, opt_idxs_steps[:, 0]],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+                edgecolors='none',
                 s=plt_sett.lw_2 * opt_scatt_size_scale)
 
             axes[0, 2].plot(
@@ -1340,6 +1345,7 @@ class GTGPlotSingleSite:
                 ref_grp['pcorrs'][data_lab_idx, opt_idxs_steps[:, 0]],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+                edgecolors='none',
                 s=plt_sett.lw_2 * opt_scatt_size_scale)
 
             axes[1, 2].plot(
@@ -1355,6 +1361,7 @@ class GTGPlotSingleSite:
                 ref_grp['nths'][data_lab_idx, opt_idxs_ords[:, 0]],
                 alpha=plt_sett.alpha_2,
                 color=plt_sett.lc_2,
+                edgecolors='none',
                 s=plt_sett.lw_2 * opt_scatt_size_scale)
 
             leg_flag = True
@@ -1575,7 +1582,7 @@ class GTGPlotSingleSite:
 
         cmap_beta = plt.get_cmap(plt.rcParams['image.cmap'])
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:]
+        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:6]
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']
@@ -1681,6 +1688,7 @@ class GTGPlotSingleSite:
                     probs_i,
                     rolled_probs_i,
                     c=clrs[:-lag_steps[i]],
+                    edgecolors='none',
                     alpha=plt_sett.alpha_1)
 
                 axes[row, col].grid()
@@ -1742,7 +1750,7 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld']
+        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:6]
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']
