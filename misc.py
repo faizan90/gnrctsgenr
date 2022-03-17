@@ -206,3 +206,68 @@ def get_lagged_pair_corrs_dict(data, corr_type, lags):
 
     return lag_corrs_dict
 
+
+def show_formatted_elapsed_time(seconds_elapsed):
+
+    '''
+    Take number of seconds and convert it to a string
+    that shows weeks, days, hours, minutes and seconds.
+    '''
+
+    assert isinstance(seconds_elapsed, (int, float)), (
+        f'seconds_elapsed ({type(seconds_elapsed)}) must be a finite number!')
+
+    assert -float('inf') < seconds_elapsed < +float('inf'), (
+        'seconds_elapsed must be a finite number!')
+
+    assert seconds_elapsed >= 0, (
+        f'second_elapsed ({seconds_elapsed}) cannot be negative!')
+
+    secs_rem = float(seconds_elapsed)
+
+    # Constants.
+    secs_in_minutes = 60.0
+    secs_in_hours = secs_in_minutes * 60.0
+    secs_in_day = secs_in_hours * 24.0
+    secs_in_week = secs_in_day * 7.0
+
+    # Weeks.
+    n_weeks = int(secs_rem // secs_in_week)
+
+    secs_rem = secs_rem % secs_in_week
+
+    # Days.
+    n_days = int(secs_rem // secs_in_day)
+
+    secs_rem = secs_rem % secs_in_day
+
+    # Hours.
+    n_hours = int(secs_rem // secs_in_hours)
+
+    secs_rem = secs_rem % secs_in_hours
+
+    # Minutes.
+    n_minutes = int(secs_rem // secs_in_minutes)
+
+    # Seconds.
+    secs_rem = secs_rem % secs_in_minutes
+
+    # Output string.
+    out_str = []
+
+    if n_weeks:
+        out_str.append(f'{n_weeks} week(s)')
+
+    if n_days:
+        out_str.append(f'{n_days} day(s)')
+
+    if n_hours:
+        out_str.append(f'{n_hours} hour(s)')
+
+    if n_minutes:
+        out_str.append(f'{n_minutes} minute(s)')
+
+    if secs_rem or (len(out_str) == 0):
+        out_str.append(f'{secs_rem:0.3f} second(s)')
+
+    return ' '.join(out_str)

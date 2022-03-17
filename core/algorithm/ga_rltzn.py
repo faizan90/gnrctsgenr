@@ -109,8 +109,7 @@ class GTGAlgRealization:
 
     def _show_obj_wts(self):
 
-        _obj_labs = self._sett_obj_flag_labels[
-            self._sett_obj_flag_vals]
+        _obj_labs = self._sett_obj_flag_labels[self._sett_obj_flag_vals]
 
         print(
             'Obj. wts.:',

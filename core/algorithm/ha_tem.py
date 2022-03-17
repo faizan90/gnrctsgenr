@@ -11,7 +11,7 @@ from multiprocessing import Manager, Lock
 from pathos.multiprocessing import ProcessPool
 
 from ..aa_base import GTGBase
-from ...misc import print_sl, print_el
+from ...misc import print_sl, print_el, show_formatted_elapsed_time
 
 
 class GTGAlgTemperature:
@@ -334,10 +334,12 @@ class GTGAlgTemperature:
         if self._vb:
             print_sl()
 
+            time_tem_str = show_formatted_elapsed_time(end_tm - beg_tm)
+
             print(
                 f'Found initialization temperature of '
-                f'{self._sett_ann_init_temp:5.3E} in {end_tm - beg_tm:0.3f} '
-                f'seconds using {search_attempts} attempts.')
+                f'{self._sett_ann_init_temp:5.3E} in {time_tem_str} '
+                f'using {search_attempts} attempts.')
 
             print_el()
         return

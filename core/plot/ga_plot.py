@@ -190,26 +190,26 @@ class GenericTimeSeriesGeneratorPlot:
             ftns_args.extend([
                 (self._plot_cmpr_1D_vars, []),
                 (self._plot_cmpr_ft_corrs, []),
-                (self._plot_cmpr_nth_ord_diffs, []),
-                (self._plot_mag_cdfs, []),
-                (self._plot_mag_cos_sin_cdfs_base, (np.cos, 'cos', 'cosine')),
-                (self._plot_mag_cos_sin_cdfs_base, (np.sin, 'sin', 'sine')),
-                (self._plot_ts_probs, []),
-                (self._plot_phs_cdfs, []),
+                # (self._plot_cmpr_nth_ord_diffs, []),
+                # (self._plot_mag_cdfs, []),
+                # (self._plot_mag_cos_sin_cdfs_base, (np.cos, 'cos', 'cosine')),
+                # (self._plot_mag_cos_sin_cdfs_base, (np.sin, 'sin', 'sine')),
+                # (self._plot_ts_probs, []),
+                # (self._plot_phs_cdfs, []),
                 (self._plot_cmpr_ecop_scatter, []),
                 # (self._plot_cmpr_ecop_denss, []),
-                (self._plot_gnrc_cdfs_cmpr, ('scorr', 'Numerator')),
-                (self._plot_gnrc_cdfs_cmpr, ('asymm_1', 'Numerator')),
-                (self._plot_gnrc_cdfs_cmpr, ('asymm_2', 'Numerator')),
-                (self._plot_gnrc_cdfs_cmpr, ('ecop_dens', 'Bin density')),
+                # (self._plot_gnrc_cdfs_cmpr, ('scorr', 'Numerator')),
+                # (self._plot_gnrc_cdfs_cmpr, ('asymm_1', 'Numerator')),
+                # (self._plot_gnrc_cdfs_cmpr, ('asymm_2', 'Numerator')),
+                # (self._plot_gnrc_cdfs_cmpr, ('ecop_dens', 'Bin density')),
                 # (self._plot_gnrc_cdfs_cmpr, ('ecop_etpy', 'Bin entropy')),
-                (self._plot_gnrc_cdfs_cmpr, ('pcorr', 'Numerator')),
+                # (self._plot_gnrc_cdfs_cmpr, ('pcorr', 'Numerator')),
                 (self._plot_cmpr_data_ft, []),
                 (self._plot_cmpr_probs_ft, []),
-                (self._plot_cmpr_diffs_ft_lags, ('asymm_1',)),
-                (self._plot_cmpr_diffs_ft_lags, ('asymm_2',)),
-                (self._plot_cmpr_diffs_ft_nth_ords, ('nth_ord',)),
-                (self._plot_cmpr_etpy_ft, [])
+                # (self._plot_cmpr_diffs_ft_lags, ('asymm_1',)),
+                # (self._plot_cmpr_diffs_ft_lags, ('asymm_2',)),
+                # (self._plot_cmpr_diffs_ft_nth_ords, ('nth_ord',)),
+                # (self._plot_cmpr_etpy_ft, [])
                 ])
         return
 
@@ -229,17 +229,17 @@ class GenericTimeSeriesGeneratorPlot:
                     (self._plot_cross_ecop_scatter, []),
                     (self._plot_cross_ft_corrs, ('data',)),
                     (self._plot_cross_ft_corrs, ('probs',)),
-                    (self._plot_cross_ecop_denss, []),
-                    (self._plot_cross_gnrc_cdfs, (
-                        'mult_asymm_1_diffs', 'Numerator')),
-                    (self._plot_cross_gnrc_cdfs, (
-                        'mult_asymm_2_diffs', 'Numerator')),
-                    (self._plot_cross_gnrc_cdfs, (
-                        'mult_ecop_dens', 'Numerator')),
-                    (self._plot_cross_ecop_denss_cntmnt, []),
-                    (self._plot_cmpr_gnrc_cross_cmpos_ft, ('asymm_1',)),
-                    (self._plot_cmpr_gnrc_cross_cmpos_ft, ('asymm_2',)),
-                    (self._plot_cmpr_gnrc_cross_cmpos_ft, ('etpy',)),
+                    # (self._plot_cross_ecop_denss, []),
+                    # (self._plot_cross_gnrc_cdfs, (
+                    #     'mult_asymm_1_diffs', 'Numerator')),
+                    # (self._plot_cross_gnrc_cdfs, (
+                    #     'mult_asymm_2_diffs', 'Numerator')),
+                    # (self._plot_cross_gnrc_cdfs, (
+                    #     'mult_ecop_dens', 'Numerator')),
+                    # (self._plot_cross_ecop_denss_cntmnt, []),
+                    # (self._plot_cmpr_gnrc_cross_cmpos_ft, ('asymm_1',)),
+                    # (self._plot_cmpr_gnrc_cross_cmpos_ft, ('asymm_2',)),
+                    # (self._plot_cmpr_gnrc_cross_cmpos_ft, ('etpy',)),
                     (self._plot_cmpr_nD_vars, []),
                     (self._plot_cmpr_gnrc_ms_cumm_ft, ('data',)),
                     (self._plot_cmpr_gnrc_ms_cumm_ft, ('probs',)),

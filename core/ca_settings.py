@@ -27,6 +27,7 @@ class GTGSettings:
         # class. Also, update the _sett_obj_flags_all and
         # _sett_obj_flag_labels array initializations.
         # Modify the _update_wts and related functions accordingly.
+
         self._sett_obj_scorr_flag = None
         self._sett_obj_asymm_type_1_flag = None
         self._sett_obj_asymm_type_2_flag = None

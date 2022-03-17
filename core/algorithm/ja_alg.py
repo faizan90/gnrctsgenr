@@ -11,7 +11,8 @@ import h5py
 from multiprocessing import Manager, Lock
 from pathos.multiprocessing import ProcessPool
 
-from ...misc import print_sl, print_el, ret_mp_idxs
+from ...misc import (
+    print_sl, print_el, ret_mp_idxs, show_formatted_elapsed_time)
 
 
 class GTGAlgorithm:
@@ -38,7 +39,21 @@ class GTGAlgorithm:
             assert self._sett_misc_auto_init_temp_dir.exists(), (
                 'Could not create auto_init_temp_dir!')
 
+        beg_wts_tm = default_timer()
+
         self._update_wts()
+
+        end_wts_tm = default_timer()
+
+        if self._vb and ((end_wts_tm - beg_wts_tm) > 0.1):
+            time_wts_str = show_formatted_elapsed_time(
+                end_wts_tm - beg_wts_tm)
+
+            print_sl()
+
+            print(f'All weights\' computation took {time_wts_str}.')
+
+            print_el()
 
         if self._sett_auto_temp_set_flag:
             self._search_init_temp()
@@ -126,9 +141,10 @@ class GTGAlgorithm:
         if self._vb:
             print_sl()
 
-            print(
-                f'Total simulation time was: '
-                f'{end_sim_tm - beg_sim_tm:0.3f} seconds!')
+            time_sim_str = show_formatted_elapsed_time(
+                end_sim_tm - beg_sim_tm)
+
+            print(f'Total simulation time was: {time_sim_str}!')
 
             print_el()
 
@@ -166,7 +182,7 @@ class GTGAlgorithm:
         ((beg_rltzn_iter, end_rltzn_iter),
         ) = args
 
-        beg_thread_time = default_timer()
+        beg_thread_tm = default_timer()
 
         for rltzn_iter in range(beg_rltzn_iter, end_rltzn_iter):
 
@@ -205,23 +221,28 @@ class GTGAlgorithm:
                     stopp_criteria_str = ' and '.join(
                         stopp_criteria_labels_rltzn)
 
+                    time_rltzn_str = show_formatted_elapsed_time(
+                        end_rltzn_tm - beg_rltzn_tm)
+
                     print(
                         f'Realization {rltzn_iter} took '
-                        f'{end_rltzn_tm - beg_rltzn_tm:0.3f} '
-                        f'seconds with stopp_criteria: '
+                        f'{time_rltzn_str} with stopp_criteria: '
                         f'{stopp_criteria_str}.')
 
             self._reset_timers()
 
-        end_thread_time = default_timer()
+        end_thread_tm = default_timer()
 
         if self._vb:
+
+            time_thread_str = show_formatted_elapsed_time(
+                end_thread_tm - beg_thread_tm)
+
             with self._lock:
                 print(
                     f'Total thread time for realizations between '
                     f'{beg_rltzn_iter} and {end_rltzn_iter - 1} was '
-                    f'{end_thread_time - beg_thread_time:0.3f} '
-                    f'seconds.')
+                    f'{time_thread_str}.')
         return
 
     def verify(self):
