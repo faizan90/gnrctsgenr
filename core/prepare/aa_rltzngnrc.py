@@ -19,7 +19,7 @@ class GTGPrepareRltznGnrc:
         self.scorrs = None  # Lumped bivariate.
         self.asymms_1 = None  # Lumped bivariate.
         self.asymms_2 = None  # Lumped bivariate.
-        self.ecop_dens = None  # Lumped bivariate.
+        self.ecop_dens = None  # 2D grids (bivariate).
         self.ecop_etpy = None  # Lumped bivariate.
         self.data = None  # Original (reshuffled for sims) data.
         self.pcorrs = None  # Lumped bivariate.

@@ -214,12 +214,12 @@ class GTGPrepareUpdate:
                 dtype=np.float64)
 
             # First row and first col are temps. They are always zeros.
-            ecop_cumm_dens_arrs = np.zeros(
-                (self._data_ref_n_labels,
-                 lag_steps.size,
-                 self._sett_obj_ecop_dens_bins + 1,
-                 self._sett_obj_ecop_dens_bins + 1),
-                dtype=np.float64)
+            # ecop_cumm_dens_arrs = np.zeros(
+            #     (self._data_ref_n_labels,
+            #      lag_steps.size,
+            #      self._sett_obj_ecop_dens_bins + 1,
+            #      self._sett_obj_ecop_dens_bins + 1),
+            #     dtype=np.float64)
 
             if self._sett_obj_use_obj_dist_flag and (vtype == 'sim'):
                 ecop_dens_diffs = {}
@@ -241,7 +241,7 @@ class GTGPrepareUpdate:
 
         else:
             ecop_dens_arrs = None
-            ecop_cumm_dens_arrs = None
+            # ecop_cumm_dens_arrs = None
             ecop_dens_diffs = None
 
         if self._sett_obj_ecop_etpy_flag:
@@ -596,9 +596,9 @@ class GTGPrepareUpdate:
                     fill_bi_var_cop_dens(
                         probs_i, rolled_probs_i, ecop_dens_arrs[j, i,:,:])
 
-                    fill_cumm_dist_from_bivar_emp_dens(
-                        ecop_dens_arrs[j, i,:,:],
-                        ecop_cumm_dens_arrs[j, i,:,:])
+                    # fill_cumm_dist_from_bivar_emp_dens(
+                    #     ecop_dens_arrs[j, i,:,:],
+                    #     ecop_cumm_dens_arrs[j, i,:,:])
 
                 if (c_ecop_dens_diffs and
                     ecop_dens_diff_conts.get((label, lag), True)):
@@ -844,7 +844,7 @@ class GTGPrepareUpdate:
         rltzn_cls.scorrs = scorrs
         rltzn_cls.asymms_1 = asymms_1
         rltzn_cls.asymms_2 = asymms_2
-        rltzn_cls.ecop_dens = ecop_cumm_dens_arrs  # ecop_dens_arrs
+        rltzn_cls.ecop_dens = ecop_dens_arrs  # ecop_cumm_dens_arrs  #
         rltzn_cls.ecop_etpy = ecop_etpy_arrs
         rltzn_cls.pcorrs = pcorrs
         rltzn_cls.nths = nths

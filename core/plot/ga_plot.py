@@ -34,7 +34,8 @@ class GenericTimeSeriesGeneratorPlot:
             single_site_flag,
             multi_site_flag,
             qq_flag,
-            max_sims_to_plot):
+            max_sims_to_plot,
+            max_lags_to_plot):
 
         if self._vb:
             print_sl()
@@ -80,6 +81,12 @@ class GenericTimeSeriesGeneratorPlot:
         assert max_sims_to_plot > 0, (
             'max_sims_to_plot should be greater than zero!')
 
+        assert isinstance(max_lags_to_plot, int), (
+            'max_lags_to_plot not an integer!')
+
+        assert max_lags_to_plot > 0, (
+            'max_lags_to_plot should be greater than zero!')
+
         assert any([
             opt_state_vars_flag,
             single_site_flag,
@@ -94,35 +101,39 @@ class GenericTimeSeriesGeneratorPlot:
         self._plt_osv_flag = opt_state_vars_flag
         self._plt_ss_flag = single_site_flag
         self._plt_ms_flag = multi_site_flag
-
         self._plt_qq_flag = qq_flag
 
         self._plt_max_n_sim_plots = max_sims_to_plot
+        self._plt_max_lags_to_plot = max_lags_to_plot
 
         if self._vb:
             print(
-                f'Set the following input HDF5 file: '
-                f'{self._plt_in_h5_file}')
+                f'Set the following input HDF5 file:',
+                self._plt_in_h5_file)
 
             print(
-                f'Optimization state variables plot flag: '
-                f'{self._plt_osv_flag}')
+                f'Optimization state variables plot flag:',
+                self._plt_osv_flag)
 
             print(
-                f'Single-site plot flag: '
-                f'{self._plt_ss_flag}')
+                f'Single-site plot flag:',
+                self._plt_ss_flag)
 
             print(
-                f'Multi-site plots plot flag: '
-                f'{self._plt_ms_flag}')
+                f'Multi-site plots plot flag:',
+                self._plt_ms_flag)
 
             print(
-                f'Single-site QQ plot flag: '
-                f'{self._plt_qq_flag}')
+                f'Single-site QQ plot flag:',
+                self._plt_qq_flag)
 
             print(
-                f'Maximum number of simulations to plot: '
-                f'{self._plt_max_n_sim_plots}')
+                f'Maximum number of simulations to plot:',
+                self._plt_max_n_sim_plots)
+
+            print(
+                f'Maximum number of lags to plot:',
+                self._plt_max_lags_to_plot)
 
             print_el()
 
@@ -209,7 +220,8 @@ class GenericTimeSeriesGeneratorPlot:
                 # (self._plot_cmpr_diffs_ft_lags, ('asymm_1',)),
                 # (self._plot_cmpr_diffs_ft_lags, ('asymm_2',)),
                 # (self._plot_cmpr_diffs_ft_nth_ords, ('nth_ord',)),
-                # (self._plot_cmpr_etpy_ft, [])
+                # (self._plot_cmpr_etpy_ft, []),
+                (self._plot_ecop_denss_cntmnt, []),
                 ])
         return
 

@@ -9,8 +9,8 @@ import matplotlib as mpl
 mpl.rcParams['agg.path.chunksize'] = 50000
 
 from math import ceil
-from timeit import default_timer
 from itertools import product
+from timeit import default_timer
 
 import h5py
 import numpy as np
@@ -37,6 +37,183 @@ class GTGPlotSingleSite:
 
         return
 
+    def _plot_ecop_denss_cntmnt(self):
+
+        '''
+        Meant for pairs only.
+        '''
+
+        beg_tm = default_timer()
+
+        h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
+
+        plt_sett = self._plt_sett_cross_ecops_denss_cntmnt
+
+        new_mpl_prms = plt_sett.prms_dict
+
+        old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
+
+        set_mpl_prms(new_mpl_prms)
+
+        lag_steps = h5_hdl[
+            'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
+
+        data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
+
+        sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        cmap_beta = plt.get_cmap('Accent')._resample(3)  # plt.get_cmap(plt.rcParams['image.cmap'])
+
+        cmap_beta.colors[1,:] = [1, 1, 1, 1]
+
+        cmap_mappable_beta = plt.cm.ScalarMappable(
+            norm=Normalize(-1, +1, clip=True), cmap=cmap_beta)
+
+        cmap_mappable_beta.set_array([])
+
+        ref_ecop_denss = h5_hdl[
+            f'data_ref_rltzn/ecop_dens'][:,:lag_steps.size,:,:]
+
+        cntmnt_ecop_dens_arrs = np.empty_like(ref_ecop_denss)
+
+        sim_ecop_dens_mins_arr = np.full_like(
+            ref_ecop_denss, +np.inf, dtype=np.float64)
+
+        sim_ecop_dens_maxs_arr = np.full_like(
+            ref_ecop_denss, -np.inf, dtype=np.float64)
+
+        for rltzn_lab in sim_grp_main:
+            sim_ecop_denss = sim_grp_main[
+                f'{rltzn_lab}/ecop_dens'][:,:lag_steps.size,:,:]
+
+            sim_ecop_dens_mins_arr = np.minimum(
+                sim_ecop_dens_mins_arr, sim_ecop_denss)
+
+            sim_ecop_dens_maxs_arr = np.maximum(
+                sim_ecop_dens_maxs_arr, sim_ecop_denss)
+
+        h5_hdl.close()
+
+        cntmnt_ecop_dens_arrs[:] = 0.0
+
+        cntmnt_ecop_dens_arrs[
+            ref_ecop_denss < sim_ecop_dens_mins_arr] = -1
+
+        cntmnt_ecop_dens_arrs[
+            ref_ecop_denss > sim_ecop_dens_maxs_arr] = +1
+
+        for i, data_label in enumerate(data_labels):
+            fig_suff = f'{data_label}'
+
+            args = (
+                lag_steps,
+                fig_suff,
+                cntmnt_ecop_dens_arrs[i],
+                cmap_beta,
+                cmap_mappable_beta,
+                self._ss_dir,
+                plt_sett)
+
+            self._plot_ecop_denss_cntmnt_base(args)
+
+        set_mpl_prms(old_mpl_prms)
+
+        end_tm = default_timer()
+
+        if self._vb:
+            print(
+                f'Plotting single-site ecop density containment '
+                f'took {end_tm - beg_tm:0.2f} seconds.')
+        return
+
+    @staticmethod
+    def _plot_ecop_denss_cntmnt_base(args):
+
+        (lag_steps,
+         fig_suff,
+         cntmnt_ecop_dens_arrs,
+         cmap_beta,
+         cmap_mappable_beta,
+         out_dir,
+         plt_sett) = args
+
+        rows = int(ceil(lag_steps.size ** 0.5))
+        cols = ceil(lag_steps.size / rows)
+
+        fig, axes = plt.subplots(rows, cols, squeeze=False)
+
+        dx = 1.0 / (cntmnt_ecop_dens_arrs.shape[2] + 1.0)
+        dy = 1.0 / (cntmnt_ecop_dens_arrs.shape[1] + 1.0)
+
+        y, x = np.mgrid[slice(dy, 1.0, dy), slice(dx, 1.0, dx)]
+
+        row = 0
+        col = 0
+        for i in range(rows * cols):
+
+            if i >= (lag_steps.size):
+                axes[row, col].set_axis_off()
+
+            else:
+                axes[row, col].pcolormesh(
+                    x,
+                    y,
+                    cntmnt_ecop_dens_arrs[i],
+                    vmin=-1,
+                    vmax=+1,
+                    alpha=plt_sett.alpha_1,
+                    cmap=cmap_beta,
+                    shading='auto')
+
+                axes[row, col].set_xlim(0, 1)
+                axes[row, col].set_ylim(0, 1)
+
+                axes[row, col].set_aspect('equal')
+
+                axes[row, col].text(
+                    0.05,
+                    0.9,
+                    f'{lag_steps[i]} step(s) lag',
+                    alpha=plt_sett.alpha_2)
+
+                if col:
+                    axes[row, col].set_yticklabels([])
+
+                else:
+                    axes[row, col].set_ylabel('Probability (lagged)')
+
+                if row < (rows - 1):
+                    axes[row, col].set_xticklabels([])
+
+                else:
+                    axes[row, col].set_xlabel('Probability')
+
+            col += 1
+            if not (col % cols):
+                row += 1
+                col = 0
+            #==================================================================
+
+        cbaxes = fig.add_axes([0.2, 0.0, 0.65, 0.05])
+
+        cb = plt.colorbar(
+            mappable=cmap_mappable_beta,
+            cax=cbaxes,
+            orientation='horizontal',
+            label='Empirical copula density containment',
+            alpha=plt_sett.alpha_1,
+            ticks=[-1, 0, +1],
+            drawedges=False)
+
+        cb.ax.set_xticklabels(['Too hi.', 'Within', 'Too lo.'])
+
+        plt.savefig(
+            str(out_dir / f'ss__ecops_denss_cmpr_{fig_suff}.png'),
+            bbox_inches='tight')
+
+        plt.close()
+        return
+
     def _plot_cmpr_etpy_ft(self):
 
         beg_tm = default_timer()
@@ -51,8 +228,12 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld']
-        lag_steps_opt = h5_hdl['settings/sett_obj_lag_steps']
+        lag_steps = h5_hdl[
+            'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
+
+        lag_steps_opt = h5_hdl[
+            'settings/sett_obj_lag_steps'][:self._plt_max_lags_to_plot]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         loop_prod = product(data_labels, lag_steps)
@@ -269,8 +450,12 @@ class GTGPlotSingleSite:
 
         out_name_pref = f'ss__{var_label}_diffs_ft_cumsum'
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld']
-        lag_steps_opt = h5_hdl['settings/sett_obj_lag_steps']
+        lag_steps = h5_hdl[
+            'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
+
+        lag_steps_opt = h5_hdl[
+            'settings/sett_obj_lag_steps'][:self._plt_max_lags_to_plot]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         loop_prod = product(data_labels, lag_steps)
@@ -610,8 +795,12 @@ class GTGPlotSingleSite:
 
         out_name_pref = f'ss__{var_label}_diff_cdfs'
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:]
-        lag_steps_opt = h5_hdl['settings/sett_obj_lag_steps'][:]
+        lag_steps = h5_hdl[
+            'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
+
+        lag_steps_opt = h5_hdl[
+            'settings/sett_obj_lag_steps'][:self._plt_max_lags_to_plot]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         loop_prod = product(data_labels, lag_steps)
@@ -1228,8 +1417,10 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
+        # No need to limit the lags here.
         lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:]
         lag_steps_opt = h5_hdl['settings/sett_obj_lag_steps'][:]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         nth_ords = h5_hdl['settings/sett_obj_nth_ords_vld'][:]
@@ -1582,7 +1773,9 @@ class GTGPlotSingleSite:
 
         cmap_beta = plt.get_cmap(plt.rcParams['image.cmap'])
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:6]
+        lag_steps = h5_hdl[
+            'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']
@@ -1750,7 +1943,9 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:6]
+        lag_steps = h5_hdl[
+            'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']

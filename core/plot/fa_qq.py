@@ -48,8 +48,12 @@ class GTGPlotSingleSiteQQ:
 
         if step_lab is not None:
             # For the single-site case.
-            steps = h5_hdl[f'settings/sett_obj_{step_lab}s_vld'][:]
-            steps_opt = h5_hdl[f'settings/sett_obj_{step_lab}s'][:]
+            steps = h5_hdl[
+                f'settings/sett_obj_{step_lab}s_vld'
+                ][:self._plt_max_lags_to_plot]
+
+            steps_opt = h5_hdl[
+                f'settings/sett_obj_{step_lab}s'][:self._plt_max_lags_to_plot]
 
             loop_prod = product(data_labels, steps)
 

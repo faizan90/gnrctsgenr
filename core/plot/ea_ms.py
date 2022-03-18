@@ -688,16 +688,6 @@ class GTGPlotMultiSite:
             np.nan,
             dtype=np.float64)
 
-        sim_ecop_dens_mins_arr = np.full(
-            (n_ecop_dens_bins, n_ecop_dens_bins),
-            +np.inf,
-            dtype=np.float64)
-
-        sim_ecop_dens_maxs_arr = np.full(
-            (n_ecop_dens_bins, n_ecop_dens_bins),
-            -np.inf,
-            dtype=np.float64)
-
         tem_ecop_dens_arr = np.empty_like(ref_ecop_dens_arr)
 
         cntmnt_ecop_dens_arr = np.empty_like(ref_ecop_dens_arr)
@@ -714,6 +704,16 @@ class GTGPlotMultiSite:
             probs_b = h5_hdl[f'data_ref_rltzn/probs'][:, di_b]
 
             fill_bi_var_cop_dens(probs_a, probs_b, ref_ecop_dens_arr)
+
+            sim_ecop_dens_mins_arr = np.full(
+                (n_ecop_dens_bins, n_ecop_dens_bins),
+                +np.inf,
+                dtype=np.float64)
+
+            sim_ecop_dens_maxs_arr = np.full(
+                (n_ecop_dens_bins, n_ecop_dens_bins),
+                -np.inf,
+                dtype=np.float64)
 
             for rltzn_lab in sim_grp_main:
                 probs_a = sim_grp_main[f'{rltzn_lab}/probs'][:, di_a]

@@ -17,6 +17,11 @@ class GTGPlotBase:
 
         self._plt_in_h5_file = None
 
+        self._plt_osv_flag = False
+        self._plt_ss_flag = False
+        self._plt_ms_flag = False
+        self._plt_qq_flag = False
+
         self._n_cpus = None
 
         self._plt_outputs_dir = None
@@ -24,12 +29,12 @@ class GTGPlotBase:
         self._ss_dir = None
         self._osv_dir = None
         self._ms_dir = None
-
         self._qq_dir = None
 
         self._dens_dist_flag = False
 
         self._plt_max_n_sim_plots = None
+        self._plt_max_lags_to_plot = None
 
         self._plt_input_set_flag = False
         self._plt_output_set_flag = False
