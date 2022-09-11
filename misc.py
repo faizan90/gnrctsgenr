@@ -11,7 +11,11 @@ from fcopulas import (
     fill_bin_idxs_ts,
     fill_bin_dens_1d,
     fill_bin_dens_2d,
-    fill_etpy_lcl_ts)
+    fill_etpy_lcl_ts,
+    get_asymm_1_sample,
+    get_asymm_2_sample,
+    get_asymm_1_max,
+    get_asymm_2_max)
 
 PRINT_LINE_STR = 79 * '#'
 
@@ -205,6 +209,52 @@ def get_lagged_pair_corrs_dict(data, corr_type, lags):
         lag_corrs_dict[lag] = np.array(corrs)
 
     return lag_corrs_dict
+
+
+def get_lagged_pair_asymms_dict(data, asymm_type, lags):
+
+    assert data.ndim == 2, data.ndim
+
+    if asymm_type == 'order':
+        asymm_ftn = get_asymm_1_sample
+        asymm_norm = get_asymm_1_max
+
+    elif asymm_type == 'directional':
+        asymm_ftn = get_asymm_2_sample
+        asymm_norm = get_asymm_2_max
+
+    else:
+        raise NotImplementedError(asymm_type)
+
+    lag_asymms_dict = {}
+
+    for lag in lags:
+
+        assert isinstance(lag, int), type(lag)
+        # All values above the diagonal.
+        asymms = []
+        for i in range(data.shape[1]):
+            arr_i = data[:, i].copy()
+
+            for j in range(i + 1, data.shape[1]):
+                arr_j = data[:, j].copy()
+
+                arr_i_lag, arr_j_lag = roll_real_2arrs(arr_i, arr_j, lag, True)
+
+                assert arr_i_lag.size > 0
+                assert arr_j_lag.size > 0
+
+                scorr = np.corrcoef(arr_i_lag, arr_j_lag)[0, 1]
+
+                asymm = asymm_ftn(arr_i_lag, arr_j_lag)
+
+                asymm /= asymm_norm(scorr)
+
+                asymms.append(asymm)
+
+        lag_asymms_dict[lag] = np.array(asymms)
+
+    return lag_asymms_dict
 
 
 def show_formatted_elapsed_time(seconds_elapsed):

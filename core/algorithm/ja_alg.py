@@ -8,6 +8,7 @@ from time import asctime
 from timeit import default_timer
 
 import h5py
+import numpy as np
 from multiprocessing import Manager, Lock
 from pathos.multiprocessing import ProcessPool
 
@@ -107,7 +108,8 @@ class GTGAlgorithm:
 
         if n_cpus > 1:
 
-            mp_idxs = ret_mp_idxs(self._sett_misc_n_rltzns, n_cpus)
+            # mp_idxs = ret_mp_idxs(self._sett_misc_n_rltzns, n_cpus)
+            mp_idxs = np.arange(self._sett_misc_n_rltzns + 1)
 
             rltzns_gen = (
                 (
@@ -120,7 +122,7 @@ class GTGAlgorithm:
             mp_pool = ProcessPool(n_cpus)
             mp_pool.restart(True)
 
-            list(mp_pool.uimap(self._simu_grp, rltzns_gen))
+            list(mp_pool.uimap(self._simu_grp, rltzns_gen, chunksize=1))
 
             mp_pool.close()
             mp_pool.join()
@@ -238,8 +240,8 @@ class GTGAlgorithm:
             time_thread_str = show_formatted_elapsed_time(
                 end_thread_tm - beg_thread_tm)
 
-            with self._lock:
-                print(
+            if (end_rltzn_iter - beg_rltzn_iter - 1):
+                with self._lock: print(
                     f'Total thread time for realizations between '
                     f'{beg_rltzn_iter} and {end_rltzn_iter - 1} was '
                     f'{time_thread_str}.')

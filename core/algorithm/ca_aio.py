@@ -282,7 +282,9 @@ class GTGAlgIO:
                     raise NotImplementedError((var, var_val))
 
             elif isinstance(var_val, type(None)):
-                print(f'{var} is None!')
+                if self._vb and False:
+                    print(f'{var} is None!')
+
                 continue
 
             else:

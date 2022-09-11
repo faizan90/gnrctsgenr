@@ -21,9 +21,6 @@ class GTGPrepareRltznSim(GTGRG):
         self.ref_sim_ft_corr = None  # Transformed data.
         self.sim_sim_ft_corr = None  # Transformed data.
 
-        self.n_idxs_all_cts = None  # Histogram of generated phase indices.
-        self.n_idxs_acpt_cts = None  # Histogram of accepted phase indices.
-
         # Objective function variables.
         self.scorr_diffs = None  # Distributed bivariate.
         self.asymm_1_diffs = None  # Distributed bivariate.

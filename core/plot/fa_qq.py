@@ -57,13 +57,13 @@ class GTGPlotSingleSiteQQ:
 
             loop_prod = product(data_labels, steps)
 
-            out_name_pref = f'ss__{var_label}_qq'
+            out_name_pref = f'ss__qq_{var_label}'
 
         else:
             # For the multi-site case.
             loop_prod = combinations(data_labels, 2)
 
-            out_name_pref = f'ms__{var_label}_qq'
+            out_name_pref = f'ms__qq_{var_label}'
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 

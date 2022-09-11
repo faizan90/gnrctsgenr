@@ -49,7 +49,7 @@ from .core import (
     GenericTimeSeriesGeneratorPlot,
     )
 
-from .misc import roll_real_2arrs
+from .misc import roll_real_2arrs, show_formatted_elapsed_time
 
 current_process().authkey = 'gnrctsgenr'.encode(
     encoding='utf_8', errors='strict')

@@ -96,8 +96,8 @@ class GTGPrepareTfms:
             np.cos(ref_phs[1:,:] - sim_phs[1:,:]))
 
         demr = (
-            ((ref_mag[1:,:] ** 2).sum(axis=0) ** 0.5) *
-            ((sim_mag[1:,:] ** 2).sum(axis=0) ** 0.5))
+            ((ref_mag[1:,:] ** 2).sum(axis=0)) *
+            ((sim_mag[1:,:] ** 2).sum(axis=0))) ** 0.5
 
         return np.cumsum(numr, axis=0) / demr
 
@@ -160,7 +160,7 @@ class GTGPrepareTfms:
 
             # sclrs lets the first few long amplitudes into account much
             # better. These describe the direction i.e. Asymmetries.
-#             sclrs = 1.0  / np.arange(1.0, mag_spec_cumsum.size + 1.0)
+            # sclrs = 1.0  / np.arange(1.0, mag_spec_cumsum.size + 1.0)
             sclrs = mag_spec / norm_val
             sclrs[0] = 1.0  # sclrs[1:].sum()
 
@@ -417,7 +417,7 @@ class GTGPrepareTfms:
 
             # sclrs lets the first few long amplitudes into account much
             # better. These describe the direction i.e. Asymmetries.
-            sclrs = 1.0 / np.arange(1.0, input_spec_cumsum.size + 1.0)
+            sclrs = 1.0 / (np.arange(1.0, input_spec_cumsum.size + 1.0))
             sclrs[:n_frst_ft_terms] = 1.0  # input_spec_cumsum.size / n_frst_ft_terms
 
         else:

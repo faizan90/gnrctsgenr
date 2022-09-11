@@ -4,6 +4,9 @@ Created on Nov 18, 2021
 @author: Faizan3800X-Uni
 '''
 
+import h5py
+import numpy as np
+
 from .aa_setts import PlotLineSettings, PlotImageSettings, PlotScatterSettings
 
 
@@ -53,23 +56,29 @@ class GTGPlotBase:
 
         alpha_1 = 0.35
         alpha_2 = 0.6
+        alpha_3 = 0.6
 
         lw_1 = 2.0
         lw_2 = 3.0
+        lw_3 = 3.0
 
         clr_1 = 'k'
         clr_2 = 'r'
+        clr_3 = 'b'
 
         self._default_line_sett = PlotLineSettings(
             (15, 5.5),
             dpi,
             fontsize,
             alpha_1,
-            alpha_2 ,
+            alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             clr_1,
-            clr_2)
+            clr_2,
+            clr_3)
 
         self._plt_sett_tols = self._default_line_sett
         self._plt_sett_objs = self._default_line_sett
@@ -84,22 +93,28 @@ class GTGPlotBase:
             dpi,
             fontsize,
             alpha_1,
-            alpha_2 ,
+            alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             clr_1,
-            clr_2)
+            clr_2,
+            clr_3)
 
         self._plt_sett_1D_vars_wider = PlotLineSettings(
             (15, 10),
             dpi,
             fontsize,
             alpha_1,
-            alpha_2 ,
+            alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             clr_1,
-            clr_2)
+            clr_2,
+            clr_3)
 
         self._plt_sett_ecops_denss = PlotImageSettings(
             (10, 10), dpi, fontsize, 0.9, 0.9, 'Blues')
@@ -114,11 +129,14 @@ class GTGPlotBase:
             dpi,
             fontsize,
             alpha_1,
-            alpha_2 ,
+            alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             clr_1,
-            clr_2)
+            clr_2,
+            clr_3)
 
         self._plt_sett_mag_cdfs = self._plt_sett_1D_vars
 
@@ -131,11 +149,14 @@ class GTGPlotBase:
             dpi,
             fontsize,
             alpha_1,
-            alpha_2 ,
+            alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             clr_1,
-            clr_2)
+            clr_2,
+            clr_3)
 
         self._plt_sett_phs_cross_corr_cdfs = self._plt_sett_1D_vars
 
@@ -144,11 +165,14 @@ class GTGPlotBase:
             dpi,
             fontsize,
             alpha_1,
-            alpha_2 ,
+            alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             clr_1,
-            clr_2)
+            clr_2,
+            clr_3)
 
         self._plt_sett_gnrc_cdfs = self._plt_sett_1D_vars
 
@@ -158,3 +182,16 @@ class GTGPlotBase:
         self._plt_sett_cross_gnrc_cdfs = self._plt_sett_1D_vars
         self._plt_sett_cross_ecops_denss_cntmnt = self._plt_sett_ecops_denss
         return
+
+    def _get_best_obj_vals_srtd_sim_labs(self, sim_grp_main):
+
+        rltzn_labs = []
+        min_obj_vals = []
+        for rltzn_lab in sim_grp_main:
+            rltzn_labs.append(rltzn_lab)
+            min_obj_vals.append(sim_grp_main[f'{rltzn_lab}/obj_vals_min'][-1])
+
+        rltzn_labs = np.array(rltzn_labs)
+        min_obj_vals = np.array(min_obj_vals)
+
+        return rltzn_labs[np.argsort(min_obj_vals)]

@@ -55,10 +55,13 @@ class PlotLineSettings(PlotSettings):
             fontsize,
             alpha_1,
             alpha_2,
+            alpha_3,
             lw_1,
             lw_2,
+            lw_3,
             lc_1,
-            lc_2):
+            lc_2,
+            lc_3):
 
         PlotSettings.__init__(self, figsize, dpi, fontsize)
 
@@ -72,6 +75,11 @@ class PlotLineSettings(PlotSettings):
 
         assert 0 <= alpha_2 <= 1, 'alpha can only be 0 <= alpha_2 <= 1!'
 
+        assert isinstance(alpha_3, (int, float)), (
+            'alpha_3 can only be an integer or a float!')
+
+        assert 0 <= alpha_3 <= 1, 'alpha can only be 0 <= alpha_3 <= 1!'
+
         assert isinstance(lw_1, (int, float)), (
             'lw_1 not an integer or a float!')
 
@@ -82,20 +90,29 @@ class PlotLineSettings(PlotSettings):
 
         assert lw_2 > 0, 'lw_2 must be > 0!'
 
+        assert isinstance(lw_3, (int, float)), (
+            'lw_3 not an integer or a float!')
+
+        assert lw_3 > 0, 'lw_3 must be > 0!'
+
         assert isinstance(lc_1, (str, tuple, hex)), 'Invalid lc_1!'
         assert isinstance(lc_2, (str, tuple, hex)), 'Invalid lc_2!'
+        assert isinstance(lc_3, (str, tuple, hex)), 'Invalid lc_3!'
 
         self.prms_dict.update({
             })
 
         self.alpha_1 = alpha_1
         self.alpha_2 = alpha_2
+        self.alpha_3 = alpha_3
 
         self.lw_1 = lw_1
         self.lw_2 = lw_2
+        self.lw_3 = lw_3
 
         self.lc_1 = lc_1
         self.lc_2 = lc_2
+        self.lc_3 = lc_3
         return
 
 

@@ -240,6 +240,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for (data_label, lag_step) in loop_prod:
 
             ref_grp = h5_hdl[f'data_ref_rltzn']
@@ -256,6 +258,9 @@ class GTGPlotSingleSite:
             sim_periods = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -286,6 +291,19 @@ class GTGPlotSingleSite:
                 color=plt_sett.lc_2,
                 lw=plt_sett.lw_2,
                 label='ref')
+
+            sim_probs_ft = sim_grp_main[
+                f'{best_rltzn_lab}/etpy_ft_{data_label}_{lag_step:03d}'][:]
+
+            label = 'best'
+
+            plt.semilogx(
+                sim_periods,
+                sim_probs_ft,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -337,7 +355,7 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        out_name_pref = f'ss__{var_label}_diffs_ft_cumsum'
+        out_name_pref = f'ss__diffs_ft_cumsum_{var_label}'
 
         nth_ords = h5_hdl['settings/sett_obj_nth_ords_vld']
         nth_ords_opt = h5_hdl['settings/sett_obj_nth_ords']
@@ -346,6 +364,8 @@ class GTGPlotSingleSite:
         loop_prod = product(data_labels, nth_ords)
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
 
         for (data_label, nth_ord) in loop_prod:
 
@@ -361,17 +381,12 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_ref
             plt.figure()
 
-            plt.semilogx(
-                ref_periods,
-                ref_vals,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             sim_periods = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -398,6 +413,28 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.semilogx(
+                ref_periods,
+                ref_vals,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_vals = sim_grp_main[
+                f'{best_rltzn_lab}/{var_label}_'
+                f'diffs_ft_{data_label}_{nth_ord:03d}'][:]
+
+            label = 'best'
+
+            plt.semilogx(
+                sim_periods,
+                sim_vals,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -448,7 +485,7 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        out_name_pref = f'ss__{var_label}_diffs_ft_cumsum'
+        out_name_pref = f'ss__diffs_ft_cumsum_{var_label}'
 
         lag_steps = h5_hdl[
             'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
@@ -461,6 +498,8 @@ class GTGPlotSingleSite:
         loop_prod = product(data_labels, lag_steps)
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
 
         for (data_label, lag_step) in loop_prod:
 
@@ -476,17 +515,12 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_ref
             plt.figure()
 
-            plt.semilogx(
-                ref_periods,
-                ref_vals,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             sim_periods = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -513,6 +547,28 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.semilogx(
+                ref_periods,
+                ref_vals,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_vals = sim_grp_main[
+                f'{best_rltzn_lab}/{var_label}_'
+                f'diffs_ft_{data_label}_{lag_step:03d}'][:]
+
+            label = 'best'
+
+            plt.semilogx(
+                sim_periods,
+                sim_vals,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -571,6 +627,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for data_lab_idx in loop_prod:
 
             ref_grp = h5_hdl[f'data_ref_rltzn']
@@ -583,17 +641,12 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_ref
             plt.figure()
 
-            plt.semilogx(
-                ref_periods,
-                ref_probs_ft,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             sim_periods = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -617,7 +670,30 @@ class GTGPlotSingleSite:
 
                 leg_flag = False
 
+            plt.semilogx(
+                ref_periods,
+                ref_probs_ft,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            label = 'best'
+
+            sim_probs_ft = sim_grp_main[
+                f'{best_rltzn_lab}/probs_ft'][:, data_lab_idx]
+
+            plt.semilogx(
+                sim_periods,
+                sim_probs_ft,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
             plt.grid()
+
+            plt.ylim(-0.05, +1.05)
 
             plt.gca().set_axisbelow(True)
 
@@ -629,7 +705,7 @@ class GTGPlotSingleSite:
 
             plt.xlim(plt.xlim()[::-1])
 
-            out_name = f'ss__probs_ft_{data_labels[data_lab_idx]}.png'
+            out_name = f'ss__ft_probs_{data_labels[data_lab_idx]}.png'
 
             plt.savefig(str(self._ss_dir / out_name), bbox_inches='tight')
 
@@ -669,6 +745,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for data_lab_idx in loop_prod:
 
             ref_grp = h5_hdl[f'data_ref_rltzn']
@@ -681,17 +759,12 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_ref
             plt.figure()
 
-            plt.semilogx(
-                ref_periods,
-                ref_data_ft,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             sim_periods = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -715,7 +788,30 @@ class GTGPlotSingleSite:
 
                 leg_flag = False
 
+            plt.semilogx(
+                ref_periods,
+                ref_data_ft,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_data_ft = sim_grp_main[
+                f'{best_rltzn_lab}/data_ft'][:, data_lab_idx]
+
+            label = 'best'
+
+            plt.semilogx(
+                sim_periods,
+                sim_data_ft,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
             plt.grid()
+
+            plt.ylim(-0.05, +1.05)
 
             plt.gca().set_axisbelow(True)
 
@@ -727,7 +823,7 @@ class GTGPlotSingleSite:
 
             plt.xlim(plt.xlim()[::-1])
 
-            out_name = f'ss__data_ft_{data_labels[data_lab_idx]}.png'
+            out_name = f'ss__ft_data_{data_labels[data_lab_idx]}.png'
 
             plt.savefig(str(self._ss_dir / out_name), bbox_inches='tight')
 
@@ -793,7 +889,7 @@ class GTGPlotSingleSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        out_name_pref = f'ss__{var_label}_diff_cdfs'
+        out_name_pref = f'ss__diff_cdfs_{var_label}'
 
         lag_steps = h5_hdl[
             'settings/sett_obj_lag_steps_vld'][:self._plt_max_lags_to_plot]
@@ -806,6 +902,8 @@ class GTGPlotSingleSite:
         loop_prod = product(data_labels, lag_steps)
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
 
         for (data_label, lag_step) in loop_prod:
 
@@ -826,16 +924,11 @@ class GTGPlotSingleSite:
 
             plt.figure()
 
-            plt.plot(
-                ref_vals_plt,
-                ref_probs_plt,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -864,6 +957,37 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.plot(
+                ref_vals_plt,
+                ref_probs_plt,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_vals = sim_grp_main[
+                f'{best_rltzn_lab}/{var_label}_'
+                f'diffs_{data_label}_{lag_step:03d}'][:]
+
+            sim_probs = rankdata(sim_vals) / (sim_vals.size + 1)
+
+            if self._dens_dist_flag:
+                sim_probs_plt, sim_vals_plt = self._get_dens_ftn(
+                    sim_probs, sim_vals)
+
+            else:
+                sim_probs_plt, sim_vals_plt = sim_probs, sim_vals
+
+            label = 'best'
+
+            plt.plot(
+                sim_vals_plt,
+                sim_probs_plt,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -923,6 +1047,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for data_lab_idx in loop_prod:
             ref_ts_probs = h5_hdl[
                 f'data_ref_rltzn/probs'][:, data_lab_idx]
@@ -930,15 +1056,11 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_ref
             plt.figure()
 
-            plt.plot(
-                ref_ts_probs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -956,6 +1078,25 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.plot(
+                ref_ts_probs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_ts_probs = sim_grp_main[
+                f'{best_rltzn_lab}/probs'][:, data_lab_idx]
+
+            label = 'best'
+
+            plt.plot(
+                sim_ts_probs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -1009,6 +1150,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for data_lab_idx in loop_prod:
 
             ref_phs = np.sort(np.angle(h5_hdl[
@@ -1025,35 +1168,11 @@ class GTGPlotSingleSite:
 #             dens_plr_fig = plt.figure()
 #             dens_pln_fig = plt.figure()
 
-            plt.figure(prob_pln_fig.number)
-            plt.plot(
-                ref_phs,
-                ref_probs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
-#             plt.figure(dens_plr_fig.number)
-#             plt.polar(
-#                 ref_phs_dens_x,
-#                 ref_phs_dens_y,
-#                 alpha=plt_sett.alpha_2,
-#                 color=plt_sett.lc_2,
-#                 lw=plt_sett.lw_1,
-#                 label='ref')
-#
-#             plt.figure(dens_pln_fig.number)
-#             plt.plot(
-#                 ref_phs_dens_x,
-#                 ref_phs_dens_y,
-#                 alpha=plt_sett.alpha_2,
-#                 color=plt_sett.lc_2,
-#                 lw=plt_sett.lw_2,
-#                 label='ref')
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -1099,6 +1218,48 @@ class GTGPlotSingleSite:
 #                     label=label)
 
                 leg_flag = False
+
+            plt.figure(prob_pln_fig.number)
+            plt.plot(
+                ref_phs,
+                ref_probs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+#             plt.figure(dens_plr_fig.number)
+#             plt.polar(
+#                 ref_phs_dens_x,
+#                 ref_phs_dens_y,
+#                 alpha=plt_sett.alpha_2,
+#                 color=plt_sett.lc_2,
+#                 lw=plt_sett.lw_1,
+#                 label='ref')
+#
+#             plt.figure(dens_pln_fig.number)
+#             plt.plot(
+#                 ref_phs_dens_x,
+#                 ref_phs_dens_y,
+#                 alpha=plt_sett.alpha_2,
+#                 color=plt_sett.lc_2,
+#                 lw=plt_sett.lw_2,
+#                 label='ref')
+
+            plt.figure(prob_pln_fig.number)
+
+            sim_phs = np.sort(np.angle(
+                sim_grp_main[f'{best_rltzn_lab}/ft'][:, data_lab_idx]))
+
+            label = 'best'
+
+            plt.plot(
+                sim_phs,
+                sim_probs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             # probs plain
             plt.figure(prob_pln_fig.number)
@@ -1192,6 +1353,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
         n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']
@@ -1228,17 +1391,12 @@ class GTGPlotSingleSite:
 
             plt.figure()
 
-            plt.plot(
-                ref_mag_cos_abs,
-                ref_probs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             sim_probs = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -1282,6 +1440,47 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.plot(
+                ref_mag_cos_abs,
+                ref_probs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_ft = sim_grp_main[f'{best_rltzn_lab}/ft'][:, data_lab_idx]
+
+            sim_phs = np.angle(sim_ft)
+
+            sim_mag = np.abs(sim_ft)
+
+            if shrt_lab == 'cos':
+                sim_mag_cos_abs_ft = np.zeros_like(sim_mag, dtype=complex)
+                sim_mag_cos_abs_ft.real = sim_mag * sin_cos_ftn(sim_phs)
+
+                sim_mag_cos_abs = np.fft.irfft(sim_mag_cos_abs_ft)
+
+            elif shrt_lab == 'sin':
+                sim_mag_cos_abs_ft = np.zeros_like(sim_mag, dtype=complex)
+                sim_mag_cos_abs_ft.imag = sim_mag * sin_cos_ftn(sim_phs)
+
+                sim_mag_cos_abs = np.fft.irfft(sim_mag_cos_abs_ft)
+
+            else:
+                raise ValueError(f'Unknown shrt_lab: {shrt_lab}!')
+
+            sim_mag_cos_abs.sort()
+
+            label = 'best'
+
+            plt.plot(
+                sim_mag_cos_abs,
+                sim_probs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -1334,6 +1533,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for data_lab_idx in loop_prod:
 
             ref_mag_abs = np.sort(np.abs(
@@ -1344,16 +1545,11 @@ class GTGPlotSingleSite:
 
             plt.figure()
 
-            plt.plot(
-                ref_mag_abs,
-                ref_probs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -1374,6 +1570,29 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.plot(
+                ref_mag_abs,
+                ref_probs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_mag_abs = np.sort(np.abs(
+                sim_grp_main[f'{best_rltzn_lab}/ft'][:, data_lab_idx]))
+
+            sim_probs = rankdata(sim_mag_abs) / (sim_mag_abs.size + 1)
+
+            label = 'best'
+
+            plt.plot(
+                sim_mag_abs,
+                sim_probs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -1432,6 +1651,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         opt_idxs_steps = []
         for i, lag_step in enumerate(lag_steps):
             if lag_step not in lag_steps_opt:
@@ -1458,105 +1679,11 @@ class GTGPlotSingleSite:
 
             axes = plt.subplots(2, 3, squeeze=False)[1]
 
-            axes[0, 0].plot(
-                lag_steps,
-                ref_grp['scorrs'][data_lab_idx,:],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
-            axes[0, 0].scatter(
-                opt_idxs_steps[:, 1],
-                ref_grp['scorrs'][data_lab_idx, opt_idxs_steps[:, 0]],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                edgecolors='none',
-                s=plt_sett.lw_2 * opt_scatt_size_scale)
-
-            axes[1, 0].plot(
-                lag_steps,
-                ref_grp['asymms_1'][data_lab_idx,:],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-
-                lw=plt_sett.lw_2,
-                label='ref')
-
-            axes[1, 0].scatter(
-                opt_idxs_steps[:, 1],
-                ref_grp['asymms_1'][data_lab_idx, opt_idxs_steps[:, 0]],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                edgecolors='none',
-                s=plt_sett.lw_2 * opt_scatt_size_scale)
-
-            axes[1, 1].plot(
-                lag_steps,
-                ref_grp['asymms_2'][data_lab_idx,:],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
-            axes[1, 1].scatter(
-                opt_idxs_steps[:, 1],
-                ref_grp['asymms_2'][data_lab_idx, opt_idxs_steps[:, 0]],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                edgecolors='none',
-                s=plt_sett.lw_2 * opt_scatt_size_scale)
-
-            axes[0, 1].plot(
-                lag_steps,
-                ref_grp['ecop_etpy'][data_lab_idx,:],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
-            axes[0, 1].scatter(
-                opt_idxs_steps[:, 1],
-                ref_grp['ecop_etpy'][data_lab_idx, opt_idxs_steps[:, 0]],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                edgecolors='none',
-                s=plt_sett.lw_2 * opt_scatt_size_scale)
-
-            axes[0, 2].plot(
-                lag_steps,
-                ref_grp['pcorrs'][data_lab_idx,:],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
-            axes[0, 2].scatter(
-                opt_idxs_steps[:, 1],
-                ref_grp['pcorrs'][data_lab_idx, opt_idxs_steps[:, 0]],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                edgecolors='none',
-                s=plt_sett.lw_2 * opt_scatt_size_scale)
-
-            axes[1, 2].plot(
-                nth_ords,
-                ref_grp['nths'][data_lab_idx,:],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
-            axes[1, 2].scatter(
-                opt_idxs_ords[:, 1],
-                ref_grp['nths'][data_lab_idx, opt_idxs_ords[:, 0]],
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                edgecolors='none',
-                s=plt_sett.lw_2 * opt_scatt_size_scale)
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -1614,6 +1741,161 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            axes[0, 0].plot(
+                lag_steps,
+                ref_grp['scorrs'][data_lab_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            axes[0, 0].scatter(
+                opt_idxs_steps[:, 1],
+                ref_grp['scorrs'][data_lab_idx, opt_idxs_steps[:, 0]],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                edgecolors='none',
+                zorder=3,
+                s=plt_sett.lw_2 * opt_scatt_size_scale)
+
+            axes[1, 0].plot(
+                lag_steps,
+                ref_grp['asymms_1'][data_lab_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            axes[1, 0].scatter(
+                opt_idxs_steps[:, 1],
+                ref_grp['asymms_1'][data_lab_idx, opt_idxs_steps[:, 0]],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                edgecolors='none',
+                zorder=3,
+                s=plt_sett.lw_2 * opt_scatt_size_scale)
+
+            axes[1, 1].plot(
+                lag_steps,
+                ref_grp['asymms_2'][data_lab_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            axes[1, 1].scatter(
+                opt_idxs_steps[:, 1],
+                ref_grp['asymms_2'][data_lab_idx, opt_idxs_steps[:, 0]],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                edgecolors='none',
+                zorder=3,
+                s=plt_sett.lw_2 * opt_scatt_size_scale)
+
+            axes[0, 1].plot(
+                lag_steps,
+                ref_grp['ecop_etpy'][data_lab_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            axes[0, 1].scatter(
+                opt_idxs_steps[:, 1],
+                ref_grp['ecop_etpy'][data_lab_idx, opt_idxs_steps[:, 0]],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                edgecolors='none',
+                zorder=3,
+                s=plt_sett.lw_2 * opt_scatt_size_scale)
+
+            axes[0, 2].plot(
+                lag_steps,
+                ref_grp['pcorrs'][data_lab_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            axes[0, 2].scatter(
+                opt_idxs_steps[:, 1],
+                ref_grp['pcorrs'][data_lab_idx, opt_idxs_steps[:, 0]],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                edgecolors='none',
+                zorder=3,
+                s=plt_sett.lw_2 * opt_scatt_size_scale)
+
+            axes[1, 2].plot(
+                nth_ords,
+                ref_grp['nths'][data_lab_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            axes[1, 2].scatter(
+                opt_idxs_ords[:, 1],
+                ref_grp['nths'][data_lab_idx, opt_idxs_ords[:, 0]],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                edgecolors='none',
+                zorder=3,
+                s=plt_sett.lw_2 * opt_scatt_size_scale)
+
+            # Best obj_val line.
+            sim_grp = sim_grp_main[best_rltzn_lab]
+
+            label = 'best'
+
+            axes[0, 0].plot(
+                lag_steps,
+                sim_grp['scorrs'][data_lab_idx,:],
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[1, 0].plot(
+                lag_steps,
+                sim_grp['asymms_1'][data_lab_idx,:],
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[1, 1].plot(
+                lag_steps,
+                sim_grp['asymms_2'][data_lab_idx,:],
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[0, 1].plot(
+                lag_steps,
+                sim_grp['ecop_etpy'][data_lab_idx,:],
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[0, 2].plot(
+                lag_steps,
+                sim_grp['pcorrs'][data_lab_idx,:],
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[1, 2].plot(
+                nth_ords,
+                sim_grp['nths'][data_lab_idx,:],
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             axes[0, 0].grid()
             axes[1, 0].grid()
@@ -1784,6 +2066,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_labs = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)
+
         for data_lab_idx in loop_prod:
 
             fig_suff = f'ref_{data_labels[data_lab_idx]}'
@@ -1814,7 +2098,7 @@ class GTGPlotSingleSite:
             self._plot_cmpr_ecop_denss_base(args)
 
             plot_ctr = 0
-            for rltzn_lab in sim_grp_main:
+            for rltzn_lab in best_rltzn_labs:
                 fig_suff = (
                     f'sim_{data_labels[data_lab_idx]}_{rltzn_lab}')
 
@@ -1958,6 +2242,8 @@ class GTGPlotSingleSite:
 
         cmap_beta = plt.get_cmap(cmap_str)
 
+        best_rltzn_labs = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)
+
         for data_lab_idx in loop_prod:
 
             probs = h5_hdl[f'data_ref_rltzn/probs'][:, data_lab_idx]
@@ -1986,7 +2272,7 @@ class GTGPlotSingleSite:
 
             plot_ctr = 0
             sim_timing_ser = None
-            for rltzn_lab in sim_grp_main:
+            for rltzn_lab in best_rltzn_labs:
                 probs = sim_grp_main[f'{rltzn_lab}/probs'][:, data_lab_idx]
 
                 if sim_timing_ser is None:
@@ -2049,6 +2335,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for (data_label, nth_ord) in loop_prod:
 
             ref_grp = h5_hdl[f'data_ref_rltzn']
@@ -2068,17 +2356,12 @@ class GTGPlotSingleSite:
 
             plt.figure()
 
-            plt.plot(
-                ref_vals_plt,
-                ref_probs_plt,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref')
-
             sim_probs = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim'
 
@@ -2109,6 +2392,35 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.plot(
+                ref_vals_plt,
+                ref_probs_plt,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            sim_vals = sim_grp_main[
+                f'{best_rltzn_lab}/nth_ord_'
+                f'diffs_{data_label}_{nth_ord:03d}'][:]
+
+            if self._dens_dist_flag:
+                sim_probs_plt, sim_vals_plt = self._get_dens_ftn(
+                    sim_probs, sim_vals)
+
+            else:
+                sim_probs_plt, sim_vals_plt = sim_probs, sim_vals
+
+            label = 'best'
+
+            plt.plot(
+                sim_vals_plt,
+                sim_probs_plt,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -2166,6 +2478,8 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
         for data_lab_idx in loop_prod:
 
             ref_grp = h5_hdl[f'data_ref_rltzn']
@@ -2178,17 +2492,12 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_ref
             plt.figure()
 
-            plt.semilogx(
-                ref_periods,
-                ref_cumm_corrs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref-ref')
-
             sim_periods = None
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim-ref'
 
@@ -2211,6 +2520,27 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.semilogx(
+                ref_periods,
+                ref_cumm_corrs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref-ref')
+
+            sim_cumm_corrs = sim_grp_main[
+                f'{best_rltzn_lab}/ref_sim_ft_corr'][:, data_lab_idx]
+
+            label = 'best'
+
+            plt.semilogx(
+                sim_periods,
+                sim_cumm_corrs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 
@@ -2236,6 +2566,8 @@ class GTGPlotSingleSite:
             plt.figure()
 
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
 
                 sim_cumm_corrs = sim_grp_main[
                     f'{rltzn_lab}/ref_sim_ft_corr'][:, data_lab_idx]
@@ -2246,6 +2578,18 @@ class GTGPlotSingleSite:
                     alpha=plt_sett.alpha_1,
                     color=plt_sett.lc_1,
                     lw=plt_sett.lw_1)
+
+            sim_cumm_corrs = sim_grp_main[
+                f'{best_rltzn_lab}/ref_sim_ft_corr'][:, data_lab_idx]
+
+            label = 'best'
+
+            plt.plot(
+                ref_cumm_corrs,
+                sim_cumm_corrs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3)
 
             plt.grid()
 
@@ -2270,16 +2614,11 @@ class GTGPlotSingleSite:
             # cumm ft corrs, sim_sim
             plt.figure()
 
-            plt.semilogx(
-                ref_periods,
-                ref_cumm_corrs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref-ref')
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim-sim'
 
@@ -2299,6 +2638,27 @@ class GTGPlotSingleSite:
 
                 leg_flag = False
 
+            plt.semilogx(
+                ref_periods,
+                ref_cumm_corrs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref-ref')
+
+            sim_cumm_corrs = sim_grp_main[
+                f'{best_rltzn_lab}/sim_sim_ft_corr'][:, data_lab_idx]
+
+            label = 'best'
+
+            plt.semilogx(
+                sim_periods,
+                sim_cumm_corrs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
             plt.grid()
 
             plt.gca().set_axisbelow(True)
@@ -2308,7 +2668,7 @@ class GTGPlotSingleSite:
             plt.ylabel('Cummulative correlation')
             plt.xlabel('Period (steps)')
 
-            plt.ylim(-1, +1)
+            plt.ylim(-0.05, +1.05)
 
             plt.xlim(plt.xlim()[::-1])
 
@@ -2327,16 +2687,11 @@ class GTGPlotSingleSite:
                 [ref_cumm_corrs[0]],
                  ref_cumm_corrs[1:] - ref_cumm_corrs[:-1]))
 
-            plt.semilogx(
-                ref_periods,
-                ref_freq_corrs,
-                alpha=plt_sett.alpha_2,
-                color=plt_sett.lc_2,
-                lw=plt_sett.lw_2,
-                label='ref-ref')
-
             leg_flag = True
             for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
                 if leg_flag:
                     label = 'sim-ref'
 
@@ -2359,6 +2714,31 @@ class GTGPlotSingleSite:
                     label=label)
 
                 leg_flag = False
+
+            plt.semilogx(
+                ref_periods,
+                ref_freq_corrs,
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref-ref')
+
+            sim_cumm_corrs = sim_grp_main[
+                f'{best_rltzn_lab}/ref_sim_ft_corr'][:, data_lab_idx]
+
+            sim_freq_corrs = np.concatenate((
+                [sim_cumm_corrs[0]],
+                sim_cumm_corrs[1:] - sim_cumm_corrs[:-1]))
+
+            label = 'best'
+
+            plt.plot(
+                sim_periods,
+                sim_freq_corrs,
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
 
             plt.grid()
 

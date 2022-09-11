@@ -52,12 +52,46 @@ class GTGAlgTemperature:
         First column is the acceptance rate, second is the temperature.
         '''
 
-        keep_idxs = (
-            (acpt_rates_temps[:, 0] >
-             self._sett_ann_auto_init_temp_acpt_min_bd_lo) &
-            (acpt_rates_temps[:, 0] <
-             self._sett_ann_auto_init_temp_acpt_max_bd_hi)
-            )
+        if False:
+            # This could cause trouble to get enough points.
+            # First trying this. Fewer points near the required value result
+            # in a better fit.
+            min_acpt = max(
+                self._sett_ann_auto_init_temp_acpt_min_bd_lo,
+                self._sett_ann_auto_init_temp_trgt_acpt_rate - 0.15)
+
+            max_acpt = min(
+                self._sett_ann_auto_init_temp_acpt_max_bd_hi,
+                self._sett_ann_auto_init_temp_trgt_acpt_rate + 0.05)
+
+            keep_idxs = (
+                (acpt_rates_temps[:, 0] > min_acpt) &
+                (acpt_rates_temps[:, 0] < max_acpt)
+                )
+
+        else:
+            # The upper one resulted in too few points.
+            # This one allows for some more.
+            best_app_idx = np.argmin(
+                ((acpt_rates_temps[:, 0] -
+                  self._sett_ann_auto_init_temp_trgt_acpt_rate) ** 2))
+
+            keep_idxs = np.arange(
+                max(0, best_app_idx - 5),
+                min(best_app_idx + 4, acpt_rates_temps.shape[0]))
+
+        n_keep_pts = keep_idxs.sum()
+
+        if n_keep_pts < self._sett_ann_auto_init_temp_acpt_polyfit_n_pts:
+            # If points taken above are not enough then take the maximum
+            # allowed here. If this doesn't work out then an error is
+            # raised.
+            keep_idxs = (
+                (acpt_rates_temps[:, 0] >
+                 self._sett_ann_auto_init_temp_acpt_min_bd_lo) &
+                (acpt_rates_temps[:, 0] <
+                 self._sett_ann_auto_init_temp_acpt_max_bd_hi)
+                )
 
         # Sanity check.
         assert keep_idxs.sum() >= 2
@@ -70,9 +104,12 @@ class GTGAlgTemperature:
             f'Acceptance rates\' and temperatures\' matrix:\n'
             f'{acpt_rates_temps}')
 
-        acpt_rates_temps = acpt_rates_temps[keep_idxs,:].copy()
+        # acpt_rates_temps = acpt_rates_temps[keep_idxs,:].copy()
 
-        poly_deg = 4
+        # Odd values are bad. High values result in an unstable fit.
+        # Choosing few values for the fit and poly_deg of 2 results
+        # in a stable fit.
+        poly_deg = 2
         if keep_idxs.sum() < poly_deg:
             poly_deg = keep_idxs.sum()
 
@@ -80,29 +117,18 @@ class GTGAlgTemperature:
             poly_deg -= 1
 
         poly_coeffs = np.polyfit(
-            acpt_rates_temps[:, 0],
-            acpt_rates_temps[:, 1],
+            acpt_rates_temps[keep_idxs, 0],
+            acpt_rates_temps[keep_idxs, 1],
             deg=poly_deg)
 
         poly_ftn = np.poly1d(poly_coeffs)
 
         init_temp = poly_ftn(self._sett_ann_auto_init_temp_trgt_acpt_rate)
 
-        assert (
-            self._sett_ann_auto_init_temp_temp_bd_lo <=
-            init_temp <=
-            self._sett_ann_auto_init_temp_temp_bd_hi), (
-                f'Interpolated initialization temperature {init_temp:6.2E} '
-                f'is out of bounds!')
-
-        assert init_temp > 0, (
-            f'Interpolated initialization temperature {init_temp:6.2E} '
-            f'is negative!')
-
-        interp_arr = np.empty((100, 2), dtype=float)
+        interp_arr = np.empty((300, 2), dtype=float)
 
         interp_arr[:, 0] = np.linspace(
-            acpt_rates_temps[0, 0], acpt_rates_temps[-1, 0], 100)
+            acpt_rates_temps[0, 0], acpt_rates_temps[-1, 0], 300)
 
         interp_arr[:, 1] = poly_ftn(interp_arr[:, 0])
 
@@ -189,7 +215,7 @@ class GTGAlgTemperature:
         plt.xlabel('Temperature')
         plt.ylabel('Acceptance rate')
 
-        plt.ylim(0, 1)
+        plt.ylim(-0.05, +1.05)
 
         plt.xscale('log')
 
@@ -258,9 +284,20 @@ class GTGAlgTemperature:
                 args_gen = ((j, init_temps[j]) for j in range(i, end_idx))
 
                 acpt_rates_temps_iter = (
-                    list(mp_pool.imap(self._get_acpt_rate_and_temp, args_gen)))
+                    list(mp_pool.imap(self._get_acpt_rate_and_temp,
+                                      args_gen,
+                                      chunksize=1)))
 
                 acpt_rates_temps.extend(acpt_rates_temps_iter)
+
+                if i == 0:
+                    assert np.any(
+                        [acpt_rates_temps_iter[k][0] <
+                         self._sett_ann_auto_init_temp_trgt_acpt_rate
+                        for k in range(len(acpt_rates_temps_iter))]), (
+                         'No acceptance rates less than than the required '
+                         'acheived after the first search iteration.\n'
+                         'Decrease lower temperature search bound!')
 
                 if np.any(
                     [acpt_rates_temps_iter[k][0] >=
@@ -317,6 +354,17 @@ class GTGAlgTemperature:
             interp_acpt_rates_temps,
             acpt_rates_temps,
             ann_init_temp)
+
+        assert (
+            self._sett_ann_auto_init_temp_temp_bd_lo <=
+            ann_init_temp <=
+            self._sett_ann_auto_init_temp_temp_bd_hi), (
+                f'Interpolated initialization temperature '
+                f'{ann_init_temp:6.2E} is out of bounds!')
+
+        assert ann_init_temp > 0, (
+            f'Interpolated initialization temperature {ann_init_temp:6.2E} '
+            f'is negative!')
 
         assert (
             self._sett_ann_auto_init_temp_temp_bd_lo <=

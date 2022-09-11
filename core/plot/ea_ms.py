@@ -22,7 +22,7 @@ from fcopulas import fill_bi_var_cop_dens
 
 from .aa_setts import get_mpl_prms, set_mpl_prms
 
-from ...misc import get_lagged_pair_corrs_dict
+from ...misc import get_lagged_pair_corrs_dict, get_lagged_pair_asymms_dict
 
 plt.ioff()
 
@@ -128,7 +128,7 @@ class GTGPlotMultiSite:
 
         plt.gca().set_aspect('equal')
 
-        out_name = f'ms__cross_{corr_type}_corrs_scatter.png'
+        out_name = f'ms__cross_corrs_scatter_{corr_type}.png'
 
         plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
 
@@ -141,6 +141,111 @@ class GTGPlotMultiSite:
         if self._vb:
             print(
                 f'Plotting multi-site pair {corr_type} correlations'
+                f'took {end_tm - beg_tm:0.2f} seconds.')
+        return
+
+    def _plot_cross_gnrc_pair_asymms(self, asymm_type, lags):
+
+        assert asymm_type in ('order', 'directional'), asymm_type
+
+        assert len(lags)
+
+        assert all([isinstance(x, int) for x in lags])
+
+        beg_tm = default_timer()
+
+        h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
+
+        plt_sett = self._plt_sett_cross_ecops_sctr
+
+        new_mpl_prms = plt_sett.prms_dict
+
+        old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
+
+        set_mpl_prms(new_mpl_prms)
+
+        ref_grp = h5_hdl[f'data_ref_rltzn']
+
+        ref_pair_asymms = get_lagged_pair_asymms_dict(
+            ref_grp['data'][...], asymm_type, lags)
+
+        sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        sim_pair_asymms_all = []
+        for rltzn_lab in sim_grp_main:
+            sim_pair_asymms = get_lagged_pair_asymms_dict(
+                sim_grp_main[f'{rltzn_lab}/data'][...], asymm_type, lags)
+
+            sim_pair_asymms_all.append(sim_pair_asymms)
+
+        h5_hdl.close()
+
+        scatt_min, scatt_max = np.inf, -np.inf
+
+        plt.figure()
+        for i, lag in enumerate(lags):
+
+            scatt_min = min([min(ref_pair_asymms[lag]), scatt_min])
+            scatt_max = max([max(ref_pair_asymms[lag]), scatt_max])
+
+            leg_flag = True
+            for j in range(len(sim_pair_asymms_all)):
+
+                if leg_flag:
+                    label = f'lag: {lag:+d}'
+
+                else:
+                    label = None
+
+                plt.scatter(
+                    ref_pair_asymms[lag],
+                    sim_pair_asymms_all[j][lag],
+                    alpha=plt_sett.alpha_1,
+                    c=f'C{i}',
+                    edgecolors='none',
+                    label=label)
+
+                leg_flag = False
+
+                scatt_min = min([min(sim_pair_asymms_all[j][lag]), scatt_min])
+                scatt_max = max([max(sim_pair_asymms_all[j][lag]), scatt_max])
+
+        plt.xlabel('Reference')
+        plt.ylabel('Simulated')
+
+        scatt_min -= 0.05
+        scatt_max += 0.05
+
+        plt.plot(
+            [scatt_min, scatt_max],
+            [scatt_min, scatt_max],
+            alpha=plt_sett.alpha_1,
+            ls='--',
+            c='k')
+
+        plt.xlim(scatt_min, scatt_max)
+        plt.ylim(scatt_min, scatt_max)
+
+        plt.grid()
+        plt.gca().set_axisbelow(True)
+
+        plt.legend()
+
+        plt.gca().set_aspect('equal')
+
+        out_name = f'ms__cross_asymm_scatter_{asymm_type}.png'
+
+        plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
+
+        plt.close('all')
+
+        set_mpl_prms(old_mpl_prms)
+
+        end_tm = default_timer()
+
+        if self._vb:
+            print(
+                f'Plotting multi-site pair {asymm_type} asymmetries'
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
@@ -221,7 +326,7 @@ class GTGPlotMultiSite:
 
         plt.xlim(plt.xlim()[::-1])
 
-        out_name = f'ms__{var_label}_ms_ft.png'
+        out_name = f'ms__ms_ft_{var_label}.png'
 
         plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
 
@@ -450,7 +555,7 @@ class GTGPlotMultiSite:
 
         set_mpl_prms(new_mpl_prms)
 
-        out_name_pref = f'ms__{var_label}_cmpos_ft_cumsum'
+        out_name_pref = f'ms__cmpos_ft_cumsum_{var_label}'
 
         comb_size = 2
         n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']
@@ -537,7 +642,7 @@ class GTGPlotMultiSite:
         plt.xlim(plt.xlim()[::-1])
 
         plt.ylabel('Cummulative cmpos FT correlation')
-        plt.xlabel(f'Period (steps)')
+        plt.xlabel('Period (steps)')
 
         out_name = f'{out_name_pref}.png'
 
@@ -832,6 +937,8 @@ class GTGPlotMultiSite:
             np.nan,
             dtype=np.float64)
 
+        best_rltzn_labs = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)
+
         for ((di_a, dl_a), (di_b, dl_b)) in loop_prod:
 
             probs_a = h5_hdl[f'data_ref_rltzn/probs'
@@ -866,7 +973,7 @@ class GTGPlotMultiSite:
             self._plot_cross_ecop_denss_base(args)
 
             plot_ctr = 0
-            for rltzn_lab in sim_grp_main:
+            for rltzn_lab in best_rltzn_labs:
                 probs_a = sim_grp_main[f'{rltzn_lab}/probs'
                     ][:, di_a]
 
@@ -1107,6 +1214,8 @@ class GTGPlotMultiSite:
 
         cmap_beta = plt.get_cmap(cmap_str)
 
+        best_rltzn_labs = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)
+
         for ((di_a, dl_a), (di_b, dl_b)) in loop_prod:
 
             probs_a = h5_hdl[f'data_ref_rltzn/probs'][:, di_a]
@@ -1139,7 +1248,7 @@ class GTGPlotMultiSite:
             self._plot_cross_ecop_scatter_base(args)
 
             plot_ctr = 0
-            for rltzn_lab in sim_grp_main:
+            for rltzn_lab in best_rltzn_labs:
                 probs_a = sim_grp_main[f'{rltzn_lab}/probs'][:, di_a]
 
                 probs_b = sim_grp_main[f'{rltzn_lab}/probs'][:, di_b]

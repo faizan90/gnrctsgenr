@@ -467,6 +467,9 @@ class PhaseAnnealingPrepareRltznSim(GTGPrepareRltznSim):
 
         GTGPrepareRltznSim.__init__(self)
 
+        self.n_idxs_all_cts = None  # Histogram of generated phase indices.
+        self.n_idxs_acpt_cts = None  # Histogram of accepted phase indices.
+
         # To keep track of modified phases.
         self.phs_mod_flags = None
 
