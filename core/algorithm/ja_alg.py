@@ -13,7 +13,7 @@ from multiprocessing import Manager, Lock
 from pathos.multiprocessing import ProcessPool
 
 from ...misc import (
-    print_sl, print_el, ret_mp_idxs, show_formatted_elapsed_time)
+    print_sl, print_el, show_formatted_elapsed_time)
 
 
 class GTGAlgorithm:
@@ -108,7 +108,6 @@ class GTGAlgorithm:
 
         if n_cpus > 1:
 
-            # mp_idxs = ret_mp_idxs(self._sett_misc_n_rltzns, n_cpus)
             mp_idxs = np.arange(self._sett_misc_n_rltzns + 1)
 
             rltzns_gen = (
@@ -229,7 +228,7 @@ class GTGAlgorithm:
                     print(
                         f'Realization {rltzn_iter} took '
                         f'{time_rltzn_str} with stopp_criteria: '
-                        f'{stopp_criteria_str}.')
+                        f'{stopp_criteria_str}.\n')
 
             self._reset_timers()
 
@@ -244,7 +243,7 @@ class GTGAlgorithm:
                 with self._lock: print(
                     f'Total thread time for realizations between '
                     f'{beg_rltzn_iter} and {end_rltzn_iter - 1} was '
-                    f'{time_thread_str}.')
+                    f'{time_thread_str}.\n')
         return
 
     def verify(self):

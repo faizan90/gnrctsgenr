@@ -323,6 +323,8 @@ class GTGPlotSingleSite:
 
             plt.xlim(plt.xlim()[::-1])
 
+            plt.ylim(-1, +2)
+
             out_name = f'ss__etpy_ft_{data_label}_{lag_step:03d}.png'
 
             plt.savefig(str(self._ss_dir / out_name), bbox_inches='tight')
@@ -357,7 +359,9 @@ class GTGPlotSingleSite:
 
         out_name_pref = f'ss__diffs_ft_cumsum_{var_label}'
 
-        nth_ords = h5_hdl['settings/sett_obj_nth_ords_vld']
+        nth_ords = h5_hdl[
+            'settings/sett_obj_nth_ords_vld'][:self._plt_max_lags_to_plot]
+
         nth_ords_opt = h5_hdl['settings/sett_obj_nth_ords']
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 
@@ -443,6 +447,8 @@ class GTGPlotSingleSite:
             plt.legend(framealpha=0.7)
 
             plt.xlim(plt.xlim()[::-1])
+
+            plt.ylim(-1, +2)
 
             if nth_ord in nth_ords_opt:
                 suff = 'opt'
@@ -577,6 +583,8 @@ class GTGPlotSingleSite:
             plt.legend(framealpha=0.7)
 
             plt.xlim(plt.xlim()[::-1])
+
+            plt.ylim(-1, +2)
 
             if lag_step in lag_steps_opt:
                 suff = 'opt'
@@ -2327,7 +2335,9 @@ class GTGPlotSingleSite:
 
         out_name_pref = 'ss__nth_diff_cdfs'
 
-        nth_ords = h5_hdl['settings/sett_obj_nth_ords_vld'][:]
+        nth_ords = h5_hdl[
+            'settings/sett_obj_nth_ords_vld'][:self._plt_max_lags_to_plot]
+
         nth_ords_opt = h5_hdl['settings/sett_obj_nth_ords'][:]
         data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
 

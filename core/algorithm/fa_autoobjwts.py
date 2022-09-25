@@ -48,6 +48,8 @@ class GTGAlgAutoObjWts:
 
         wts = (wts.size * wts) / wts.sum()
 
+        wts **= self._sett_wts_obj_exp
+
         wts_sclr = sum_means / (means * wts).sum()
 
         wts *= wts_sclr

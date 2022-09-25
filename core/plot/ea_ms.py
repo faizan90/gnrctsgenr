@@ -641,6 +641,8 @@ class GTGPlotMultiSite:
 
         plt.xlim(plt.xlim()[::-1])
 
+        plt.ylim(-1, +2)
+
         plt.ylabel('Cummulative cmpos FT correlation')
         plt.xlabel('Period (steps)')
 

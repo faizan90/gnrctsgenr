@@ -111,10 +111,10 @@ class GTGAlgRealization:
 
         _obj_labs = self._sett_obj_flag_labels[self._sett_obj_flag_vals]
 
-        print(
-            'Obj. wts.:',
-            [f'{_obj_labs[i]}: {self._sett_wts_obj_wts[i]:2.2E}'
-             for i in range(len(_obj_labs))])
+        print('\n')
+        print('Obj. wts.:')
+        for i in range(len(_obj_labs)):
+            print(f'{_obj_labs[i]}: {self._sett_wts_obj_wts[i]:2.2E}')
 
         return
 

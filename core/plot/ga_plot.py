@@ -3,7 +3,6 @@ Created on Nov 15, 2021
 
 @author: Faizan3800X-Uni
 '''
-import numpy as np
 import matplotlib as mpl
 # Has to be big enough to accomodate all plotted values.
 mpl.rcParams['agg.path.chunksize'] = 50000
@@ -200,7 +199,7 @@ class GenericTimeSeriesGeneratorPlot:
             ftns_args.extend([
                 (self._plot_cmpr_1D_vars, []),
                 (self._plot_cmpr_ft_corrs, []),
-                # (self._plot_cmpr_nth_ord_diffs, []),
+                (self._plot_cmpr_nth_ord_diffs, []),
                 # (self._plot_mag_cdfs, []),
                 # (self._plot_mag_cos_sin_cdfs_base, (np.cos, 'cos', 'cosine')),
                 # (self._plot_mag_cos_sin_cdfs_base, (np.sin, 'sin', 'sine')),
@@ -218,7 +217,7 @@ class GenericTimeSeriesGeneratorPlot:
                 (self._plot_cmpr_probs_ft, []),
                 (self._plot_cmpr_diffs_ft_lags, ('asymm_1',)),
                 (self._plot_cmpr_diffs_ft_lags, ('asymm_2',)),
-                # (self._plot_cmpr_diffs_ft_nth_ords, ('nth_ord',)),
+                (self._plot_cmpr_diffs_ft_nth_ords, ('nth_ord',)),
                 (self._plot_cmpr_etpy_ft, []),
                 (self._plot_ecop_denss_cntmnt, []),
                 ])

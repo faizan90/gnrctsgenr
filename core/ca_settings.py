@@ -20,13 +20,15 @@ class GTGSettings:
         # Order of flags is important. If changed here then synchronize the
         # order wherever necessary.
 
-        # Objective function.
+        # Objective functions.
         # For every flag added, increment self._sett_obj_n_flags by one and
         # add the new flag to the _get_all_flags, _set_all_flags_to_one_state
         # and _set_all_flags_to_mult_states of the PhaseAnnealingAlgMisc
         # class. Also, update the _sett_obj_flags_all and
         # _sett_obj_flag_labels array initializations.
         # Modify the _update_wts and related functions accordingly.
+        # Update for self._sett_obj_any_ss_flag and self._sett_obj_any_ms_flag
+        # in the verify method below.
 
         self._sett_obj_scorr_flag = None
         self._sett_obj_asymm_type_1_flag = None
@@ -112,7 +114,7 @@ class GTGSettings:
         self._sett_ann_auto_init_temp_temp_bd_lo = None
         self._sett_ann_auto_init_temp_temp_bd_hi = None
         self._sett_ann_auto_init_temp_niters = None
-        self._sett_ann_auto_init_temp_acpt_min_bd_lo = 0.20  # Needed for polyfit.
+        self._sett_ann_auto_init_temp_acpt_min_bd_lo = 0.15  # Needed for polyfit.
         self._sett_ann_auto_init_temp_acpt_max_bd_hi = 0.90  # Needed for polyfit.
         self._sett_ann_auto_init_temp_acpt_polyfit_n_pts = 5  # Needed for polyfit.
         self._sett_ann_auto_init_temp_acpt_bd_lo = None
@@ -125,6 +127,7 @@ class GTGSettings:
         self._sett_wts_obj_wts = None
         self._sett_wts_obj_auto_set_flag = None
         self._sett_wts_obj_n_iters = None
+        self._sett_wts_obj_exp = None
 
         # Lags' and nths' weights.
         self._sett_wts_lags_nths_exp = None
@@ -169,6 +172,10 @@ class GTGSettings:
         self._sett_prt_cdf_calib_set_flag = False
         self._sett_data_tfm_set_flag = False
         self._sett_misc_set_flag = False
+
+        # Additional flags for type of objective functions i.e. ss or ms.
+        self._sett_obj_any_ss_flag = False
+        self._sett_obj_any_ms_flag = False
 
         self._sett_verify_flag = False
         return
@@ -1069,7 +1076,8 @@ class GTGSettings:
             self,
             weights,
             auto_wts_set_flag,
-            wts_n_iters):
+            wts_n_iters,
+            obj_wts_exp):
 
         f'''
         Set weights for all objective functions regardless of their use.
@@ -1104,6 +1112,11 @@ class GTGSettings:
         wts_n_iters : int
             The number of times to call the objective function to get an
             estimate of the weights that each function should have.
+        obj_wts_exp : float
+            The exponent to adjust the weights with. More than one means
+            more weight to the smaller values. Should be float and greater
+            than or equal to zero. Only used when auto_wts_set_flag is
+            True.
         '''
 
         if self._vb:
@@ -1124,15 +1137,20 @@ class GTGSettings:
 
             assert wts_n_iters is None
 
+            obj_wts_exp = None
+
         else:
             assert auto_wts_set_flag is True
 
             assert isinstance(wts_n_iters, int)
             assert wts_n_iters >= 1
 
+            assert isinstance(obj_wts_exp, float)
+
         self._sett_wts_obj_wts = weights
         self._sett_wts_obj_auto_set_flag = auto_wts_set_flag
         self._sett_wts_obj_n_iters = wts_n_iters
+        self._sett_wts_obj_exp = obj_wts_exp
 
         if self._vb:
             print(
@@ -1148,6 +1166,10 @@ class GTGSettings:
 
                 print('Iterations to estimate weights:',
                     self._sett_wts_obj_n_iters)
+
+                print(
+                    'Weights\' exponent:',
+                    self._sett_wts_obj_exp)
 
             print_el()
 
@@ -1846,6 +1868,42 @@ class GTGSettings:
             print(
                 f'At maximum {n_vals_per_bin} values per bin in the '
                 f'empirical density function.')
+
+        if any([
+            self._sett_obj_scorr_flag,
+            self._sett_obj_asymm_type_1_flag,
+            self._sett_obj_asymm_type_2_flag,
+            self._sett_obj_ecop_dens_flag,
+            self._sett_obj_ecop_etpy_flag,
+            self._sett_obj_nth_ord_diffs_flag,
+            self._sett_obj_cos_sin_dist_flag,
+            self._sett_obj_pcorr_flag,
+            self._sett_obj_match_data_ft_flag,
+            self._sett_obj_match_probs_ft_flag,
+            self._sett_obj_asymm_type_1_ft_flag,
+            self._sett_obj_asymm_type_2_ft_flag,
+            self._sett_obj_nth_ord_diffs_ft_flag,
+            self._sett_obj_etpy_ft_flag,
+            ]):
+
+            self._sett_obj_any_ss_flag = True
+
+        if any([
+            self._sett_obj_asymm_type_1_ms_flag,
+            self._sett_obj_asymm_type_2_ms_flag,
+            self._sett_obj_ecop_dens_ms_flag,
+            self._sett_obj_asymm_type_1_ms_ft_flag,
+            self._sett_obj_asymm_type_2_ms_ft_flag,
+            self._sett_obj_etpy_ms_ft_flag,
+            self._sett_obj_scorr_ms_flag,
+            self._sett_obj_etpy_ms_flag,
+            self._sett_obj_match_data_ms_ft_flag,
+            self._sett_obj_match_probs_ms_ft_flag,
+            self._sett_obj_match_data_ms_pair_ft_flag,
+            self._sett_obj_match_probs_ms_pair_ft_flag,
+            ]):
+
+            self._sett_obj_any_ms_flag = True
 
         if self._vb:
             print_sl()

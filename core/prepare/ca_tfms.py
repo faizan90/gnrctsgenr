@@ -39,7 +39,7 @@ class GTGPrepareTfms:
 
     def _get_probs(self, data, make_like_ref_flag=False):
 
-        probs_all = np.empty_like(data, dtype=np.float64)
+        probs_all = np.empty_like(data, dtype=np.float64, order='f')
 
         for i in range(self._data_ref_n_labels):
             probs = rankdata(data[:, i]) / (data.shape[0] + 1.0)

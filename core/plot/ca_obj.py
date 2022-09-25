@@ -257,9 +257,17 @@ class GTGPlotOSV:
         obj_flag_vals = h5_hdl['settings/sett_obj_flag_vals'][...]
 
         obj_flag_labels = h5_hdl['settings/sett_obj_flag_labels'][...]
+
         obj_flag_labels = [
             obj_flag_label.decode('utf-8')
             for obj_flag_label in obj_flag_labels]
+
+        try:
+            obj_wts = h5_hdl['settings/sett_wts_obj_wts'][...]
+            obj_wts_sum = obj_wts.sum()
+
+        except:
+            obj_wts = obj_wts_sum = None
 
         obj_flag_idx = 0
         for i, (obj_flag_val, obj_flag_label) in enumerate(
@@ -302,6 +310,12 @@ class GTGPlotOSV:
             plt.grid()
 
             plt.gca().set_axisbelow(True)
+
+            if obj_wts is not None:
+                plt.title(
+                    f'Objective function weight: '
+                    f'{obj_wts[obj_flag_idx]:0.3E} '
+                    f'out of {obj_wts_sum:0.2E}')
 
             fig_name = f'osv__obj_vals_all_indiv_{i:02d}.png'
 

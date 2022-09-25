@@ -46,7 +46,7 @@ class GTGPrepare:
 
         assert np.all(np.isfinite(data_tfm)), 'Invalid values in data_tfm!'
 
-        return data_tfm
+        return data_tfm.copy(order='f')
 
     def _gen_ref_aux_data_gnrc(self):
 
@@ -59,7 +59,7 @@ class GTGPrepare:
 
         ft = np.fft.rfft(self._rr.data_tfm, axis=0)
 
-        self._rr.data = self._data_ref_rltzn.copy()
+        self._rr.data = self._data_ref_rltzn.copy(order='f')
 
         phs_spec = np.angle(ft)
         mag_spec = np.abs(ft)

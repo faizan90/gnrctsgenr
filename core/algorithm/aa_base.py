@@ -118,8 +118,10 @@ class GTGAlgBase:
 
         if self._vb:
             print(
-                'Algorithm stop criteria labels:',
-                self._alg_cnsts_stp_crit_labs)
+                'Algorithm stop criteria labels:')
+
+            for stop_crit_lab in self._alg_cnsts_stp_crit_labs:
+                print('-', stop_crit_lab)
 
             print_el()
 
