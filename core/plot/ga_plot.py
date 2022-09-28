@@ -198,6 +198,7 @@ class GenericTimeSeriesGeneratorPlot:
 
             ftns_args.extend([
                 (self._plot_cmpr_1D_vars, []),
+                (self._plot_cmpr_1D_vars_diff, []),
                 (self._plot_cmpr_ft_corrs, []),
                 (self._plot_cmpr_nth_ord_diffs, []),
                 # (self._plot_mag_cdfs, []),

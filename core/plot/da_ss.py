@@ -1630,6 +1630,246 @@ class GTGPlotSingleSite:
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
+    def _plot_cmpr_1D_vars_diff(self):
+
+        beg_tm = default_timer()
+
+        h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
+
+        plt_sett = self._plt_sett_1D_vars_wider
+
+        new_mpl_prms = plt_sett.prms_dict
+
+        old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
+
+        set_mpl_prms(new_mpl_prms)
+
+        # No need to limit the lags here.
+        lag_steps = h5_hdl['settings/sett_obj_lag_steps_vld'][:]
+        lag_steps_opt = h5_hdl['settings/sett_obj_lag_steps'][:]
+
+        data_labels = tuple(h5_hdl['data_ref'].attrs['data_ref_labels'])
+
+        nth_ords = h5_hdl['settings/sett_obj_nth_ords_vld'][:]
+        nth_ords_opt = h5_hdl['settings/sett_obj_nth_ords'][:]
+
+        n_data_labels = h5_hdl['data_ref'].attrs['data_ref_n_labels']
+
+        loop_prod = np.arange(n_data_labels)
+
+        sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        best_rltzn_lab = self._get_best_obj_vals_srtd_sim_labs(sim_grp_main)[0]
+
+        opt_idxs_steps = []
+        for i, lag_step in enumerate(lag_steps):
+            if lag_step not in lag_steps_opt:
+                continue
+
+            opt_idxs_steps.append((i, lag_step))
+
+        opt_idxs_steps = np.array(opt_idxs_steps)
+
+        opt_idxs_ords = []
+        for i, nth_ord in enumerate(nth_ords):
+            if nth_ord not in nth_ords_opt:
+                continue
+
+            opt_idxs_ords.append((i, nth_ord))
+
+        opt_idxs_ords = np.array(opt_idxs_ords)
+
+        for data_lab_idx in loop_prod:
+
+            ref_grp = h5_hdl[f'data_ref_rltzn']
+
+            axes = plt.subplots(2, 3, squeeze=False)[1]
+
+            leg_flag = True
+            for rltzn_lab in sim_grp_main:
+                if rltzn_lab == best_rltzn_lab:
+                    continue
+
+                if leg_flag:
+                    label = 'sim'
+
+                else:
+                    label = None
+
+                sim_grp = sim_grp_main[f'{rltzn_lab}']
+
+                axes[0, 0].plot(
+                    lag_steps,
+                    (sim_grp['scorrs'][data_lab_idx,:] -
+                     ref_grp['scorrs'][data_lab_idx,:]),
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                axes[1, 0].plot(
+                    lag_steps,
+                    (sim_grp['asymms_1'][data_lab_idx,:] -
+                     ref_grp['asymms_1'][data_lab_idx,:]),
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                axes[1, 1].plot(
+                    lag_steps,
+                    (sim_grp['asymms_2'][data_lab_idx,:] -
+                     ref_grp['asymms_2'][data_lab_idx,:]),
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                axes[0, 1].plot(
+                    lag_steps,
+                    (sim_grp['ecop_etpy'][data_lab_idx,:] -
+                     ref_grp['ecop_etpy'][data_lab_idx,:]),
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                axes[0, 2].plot(
+                    lag_steps,
+                    (sim_grp['pcorrs'][data_lab_idx,:] -
+                     ref_grp['pcorrs'][data_lab_idx,:]),
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                axes[1, 2].plot(
+                    nth_ords,
+                    (sim_grp['nths'][data_lab_idx,:] -
+                     ref_grp['nths'][data_lab_idx,:]),
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                leg_flag = False
+
+            # Best obj_val line.
+            sim_grp = sim_grp_main[best_rltzn_lab]
+
+            label = 'best'
+
+            axes[0, 0].plot(
+                lag_steps,
+                (sim_grp['scorrs'][data_lab_idx,:] -
+                 ref_grp['scorrs'][data_lab_idx,:]),
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[1, 0].plot(
+                lag_steps,
+                (sim_grp['asymms_1'][data_lab_idx,:] -
+                 ref_grp['asymms_1'][data_lab_idx,:]),
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[1, 1].plot(
+                lag_steps,
+                (sim_grp['asymms_2'][data_lab_idx,:] -
+                 ref_grp['asymms_2'][data_lab_idx,:]),
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[0, 1].plot(
+                lag_steps,
+                (sim_grp['ecop_etpy'][data_lab_idx,:] -
+                 ref_grp['ecop_etpy'][data_lab_idx,:]),
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[0, 2].plot(
+                lag_steps,
+                (sim_grp['pcorrs'][data_lab_idx,:] -
+                 ref_grp['pcorrs'][data_lab_idx,:]),
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[1, 2].plot(
+                nth_ords,
+                (sim_grp['nths'][data_lab_idx,:] -
+                 ref_grp['nths'][data_lab_idx,:]),
+                alpha=plt_sett.alpha_3,
+                color=plt_sett.lc_3,
+                lw=plt_sett.lw_3,
+                label=label)
+
+            axes[0, 0].grid()
+            axes[1, 0].grid()
+            axes[1, 1].grid()
+            axes[0, 1].grid()
+            axes[0, 2].grid()
+            axes[1, 2].grid()
+
+            axes[0, 0].set_axisbelow(True)
+            axes[1, 0].set_axisbelow(True)
+            axes[1, 1].set_axisbelow(True)
+            axes[0, 1].set_axisbelow(True)
+            axes[0, 2].set_axisbelow(True)
+            axes[1, 2].set_axisbelow(True)
+
+            axes[0, 0].legend(framealpha=0.7)
+#             axes[1, 0].legend(framealpha=0.7)
+#             axes[1, 1].legend(framealpha=0.7)
+#             axes[0, 1].legend(framealpha=0.7)
+#             axes[0, 2].legend(framealpha=0.7)
+#             axes[1, 2].legend(framealpha=0.7)
+
+            axes[0, 0].set_ylabel('Spearman correlation')
+
+            axes[1, 0].set_xlabel('Lag steps')
+            axes[1, 0].set_ylabel('Asymmetry (Type - 1)')
+
+            axes[1, 1].set_xlabel('Lag steps')
+            axes[1, 1].set_ylabel('Asymmetry (Type - 2)')
+
+            axes[0, 1].set_ylabel('Entropy')
+
+            axes[0, 2].set_xlabel('Lag steps')
+            axes[0, 2].set_ylabel('Pearson correlation')
+
+            axes[1, 2].set_xlabel('Nth orders')
+            axes[1, 2].set_ylabel('Dist. Sum')
+
+            plt.tight_layout()
+
+            fig_name = f'ss__summary_diffs_{data_labels[data_lab_idx]}.png'
+
+            plt.savefig(str(self._ss_dir / fig_name), bbox_inches='tight')
+
+            plt.close()
+
+        h5_hdl.close()
+
+        set_mpl_prms(old_mpl_prms)
+
+        end_tm = default_timer()
+
+        if self._vb:
+            print(
+                f'Plotting single-site 1D lumped statistics\' differences '
+                f'took {end_tm - beg_tm:0.2f} seconds.')
+        return
+
     def _plot_cmpr_1D_vars(self):
 
         beg_tm = default_timer()
@@ -1958,7 +2198,7 @@ class GTGPlotSingleSite:
 
         if self._vb:
             print(
-                f'Plotting single-site 2D lumped statistics '
+                f'Plotting single-site 1D lumped statistics '
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
@@ -1984,7 +2224,6 @@ class GTGPlotSingleSite:
 
         y, x = np.mgrid[slice(dy, 1.0, dy), slice(dx, 1.0, dx)]
 
-        ax_ctr = 0
         row = 0
         col = 0
         for i in range(rows * cols):
@@ -2026,8 +2265,7 @@ class GTGPlotSingleSite:
             if not (col % cols):
                 row += 1
                 col = 0
-
-            ax_ctr += 1
+            #==================================================================
 
         cbaxes = fig.add_axes([0.2, 0.0, 0.65, 0.05])
 
