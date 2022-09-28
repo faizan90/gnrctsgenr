@@ -4,10 +4,11 @@ Created on Nov 15, 2021
 @author: Faizan3800X-Uni
 '''
 
+import time
 from timeit import default_timer
+from multiprocessing import Manager, Lock
 
 import numpy as np
-from multiprocessing import Manager, Lock
 from pathos.multiprocessing import ProcessPool
 
 from ..aa_base import GTGBase
@@ -28,7 +29,7 @@ class GTGAlgTemperature:
 
     def _get_acpt_rate_and_temp(self, args):
 
-        attempt, init_temp = args
+        attempt, init_temp, que_res, que_active_threads = args
 
         rltzn_args = (
             attempt,
@@ -43,6 +44,12 @@ class GTGAlgTemperature:
                     f'Acceptance rate and temperature for '
                     f'attempt {attempt}: {rltzn[0]:5.2%}, '
                     f'{rltzn[1]:0.3E}')
+
+        if que_res is not None:
+            que_res.put(rltzn)
+
+        if que_active_threads is not None:
+            que_active_threads.get()
 
         return rltzn
 
@@ -267,44 +274,56 @@ class GTGAlgTemperature:
         n_cpus = min(n_init_temps, self._sett_misc_n_cpus)
 
         if n_cpus > 1:
-            self._lock = Manager().Lock()
 
             mp_pool = ProcessPool(n_cpus)
             mp_pool.restart(True)
 
-            for i in range(0, n_init_temps, n_cpus):
+            mngr = Manager()
 
-                end_idx = min(n_init_temps, n_cpus + i)
+            self._lock = mngr.Lock()
 
-                assert i < end_idx, 'This was not supposed to happen!'
+            que_res = mngr.Queue(n_init_temps)
+            que_active_threads = mngr.Queue(n_init_temps)
 
-                search_attempts += end_idx - i
+            keep_going_flag = True
+            keep_searching_flag = True
 
-                # Don't use ret_mp_idxs, it will be inefficient.
-                args_gen = ((j, init_temps[j]) for j in range(i, end_idx))
+            while keep_going_flag:
 
-                acpt_rates_temps_iter = (
-                    list(mp_pool.imap(self._get_acpt_rate_and_temp,
-                                      args_gen,
-                                      chunksize=1)))
+                while ((keep_searching_flag) and
+                       (que_active_threads.qsize() <= n_cpus)):
 
-                acpt_rates_temps.extend(acpt_rates_temps_iter)
+                    mp_pool.uimap(
+                        self._get_acpt_rate_and_temp,
+                        ((search_attempts,
+                          init_temps[search_attempts],
+                          que_res,
+                          que_active_threads),),
+                        chunksize=1)
 
-                if i == 0:
-                    assert np.any(
-                        [acpt_rates_temps_iter[k][0] <
-                         self._sett_ann_auto_init_temp_trgt_acpt_rate
-                        for k in range(len(acpt_rates_temps_iter))]), (
-                         'No acceptance rates less than than the required '
-                         'acheived after the first search iteration.\n'
-                         'Decrease lower temperature search bound!')
+                    que_active_threads.put(search_attempts)
 
-                if np.any(
-                    [acpt_rates_temps_iter[k][0] >=
-                        self._sett_ann_auto_init_temp_acpt_max_bd_hi
-                     for k in range(len(acpt_rates_temps_iter))]):
+                    search_attempts += 1
 
-                    break
+                    if search_attempts == n_init_temps:
+
+                        keep_searching_flag = False
+                        break
+
+                time.sleep(0.1)
+
+                while que_res.qsize():
+                    acpt_rates_temps.append(que_res.get_nowait())
+
+                    if (acpt_rates_temps[-1][0] >=
+                        self._sett_ann_auto_init_temp_acpt_max_bd_hi):
+
+                        keep_searching_flag = False
+
+                if ((not keep_searching_flag) and
+                    (search_attempts == len(acpt_rates_temps))):
+
+                    keep_going_flag = False
 
             mp_pool.close()
             mp_pool.join()
@@ -312,6 +331,12 @@ class GTGAlgTemperature:
             self._lock = None
 
             mp_pool = None
+
+            que_res = None
+            que_active_threads = None
+
+            mngr.shutdown()
+            mngr = None
 
         else:
             self._lock = Lock()
@@ -321,7 +346,8 @@ class GTGAlgTemperature:
                 search_attempts += 1
 
                 acpt_rates_temps.append(
-                    self._get_acpt_rate_and_temp((i, init_temps[i])))
+                    self._get_acpt_rate_and_temp(
+                        (i, init_temps[i], None, None)))
 
                 if (acpt_rates_temps[-1][0] >=
                     self._sett_ann_auto_init_temp_acpt_max_bd_hi):

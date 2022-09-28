@@ -80,7 +80,10 @@ class GTGAlgLagNthWts:
                 mean_obj_vals = []
                 for lag_nth in lags_nths:
 
-                    assert len(lag_nth_dict[(label, lag_nth)])
+                    assert (
+                        len(lag_nth_dict[(label, lag_nth)]) ==
+                        self._sett_wts_lags_nths_n_iters), (
+                            len(lag_nth_dict[(label, lag_nth)]))
 
                     mean_obj_val = np.array(
                         lag_nth_dict[(label, lag_nth)]).mean()

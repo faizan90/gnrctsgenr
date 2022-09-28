@@ -53,10 +53,11 @@ class GTGAlgLabelWts:
         (wts * mean_obj_vals).sum() == mean_obj_vals.sum()
         '''
 
-        # min seems to work better.
+        # mean seems to work better.
         mean_obj_vals = []
         for label in labels:
-            assert len(label_dict[label])
+            assert len(label_dict[label]) == self._sett_wts_label_n_iters, (
+                len(label_dict[label]))
 
             mean_obj_val = np.array(label_dict[label]).mean()
             mean_obj_vals.append(mean_obj_val)

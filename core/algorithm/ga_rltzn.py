@@ -25,84 +25,84 @@ class GTGAlgRealization:
     def _show_lag_nth_wts(self):
 
         if self._sett_obj_scorr_flag:
-            print('wts_lag_scorr:', self._alg_wts_lag_scorr)
+            print('\nwts_lag_scorr:\n', self._alg_wts_lag_scorr)
 
         if self._sett_obj_asymm_type_1_flag:
-            print('wts_lag_asymm_1:', self._alg_wts_lag_asymm_1)
+            print('\nwts_lag_asymm_1:\n', self._alg_wts_lag_asymm_1)
 
         if self._sett_obj_asymm_type_2_flag:
-            print('wts_lag_asymm_2:', self._alg_wts_lag_asymm_2)
+            print('\nwts_lag_asymm_2:\n', self._alg_wts_lag_asymm_2)
 
         if self._sett_obj_ecop_dens_flag:
-            print('wts_lag_ecop_dens:', self._alg_wts_lag_ecop_dens)
+            print('\nwts_lag_ecop_dens:\n', self._alg_wts_lag_ecop_dens)
 
         if self._sett_obj_ecop_etpy_flag:
-            print('wts_lag_ecop_etpy:', self._alg_wts_lag_ecop_etpy)
+            print('\nwts_lag_ecop_etpy:\n', self._alg_wts_lag_ecop_etpy)
 
         if self._sett_obj_nth_ord_diffs_flag:
-            print('wts_nth_order:', self._alg_wts_nth_order)
+            print('\nwts_nth_order:\n', self._alg_wts_nth_order)
 
         if self._sett_obj_pcorr_flag:
-            print('wts_lag_pcorr:', self._alg_wts_lag_pcorr)
+            print('\nwts_lag_pcorr:\n', self._alg_wts_lag_pcorr)
 
         if self._sett_obj_asymm_type_1_ft_flag:
-            print('wts_lag_asymm_1_ft:', self._alg_wts_lag_asymm_1_ft)
+            print('\nwts_lag_asymm_1_ft:\n', self._alg_wts_lag_asymm_1_ft)
 
         if self._sett_obj_asymm_type_2_ft_flag:
-            print('wts_lag_asymm_2_ft:', self._alg_wts_lag_asymm_2_ft)
+            print('\nwts_lag_asymm_2_ft:\n', self._alg_wts_lag_asymm_2_ft)
 
         if self._sett_obj_nth_ord_diffs_ft_flag:
-            print('wts_nth_order_ft:', self._alg_wts_nth_order_ft)
+            print('\nwts_nth_order_ft:\n', self._alg_wts_nth_order_ft)
 
         if self._sett_obj_etpy_ft_flag:
-            print('wts_lag_etpy_ft:', self._alg_wts_lag_etpy_ft)
+            print('\nwts_lag_etpy_ft:\n', self._alg_wts_lag_etpy_ft)
 
         return
 
     def _show_label_wts(self):
 
         if self._sett_obj_scorr_flag:
-            print('wts_label_scorr:', self._alg_wts_label_scorr)
+            print('\nwts_label_scorr:\n', self._alg_wts_label_scorr)
 
         if self._sett_obj_asymm_type_1_flag:
-            print('wts_label_asymm_1:', self._alg_wts_label_asymm_1)
+            print('\nwts_label_asymm_1:\n', self._alg_wts_label_asymm_1)
 
         if self._sett_obj_asymm_type_2_flag:
-            print('wts_label_asymm_2:', self._alg_wts_label_asymm_2)
+            print('\nwts_label_asymm_2:\n', self._alg_wts_label_asymm_2)
 
         if self._sett_obj_ecop_dens_flag:
             print(
-                'wts_label_ecop_dens:', self._alg_wts_label_ecop_dens)
+                '\nwts_label_ecop_dens:\n', self._alg_wts_label_ecop_dens)
 
         if self._sett_obj_ecop_etpy_flag:
             print(
-                'wts_label_ecop_etpy:', self._alg_wts_label_ecop_etpy)
+                '\nwts_label_ecop_etpy:\n', self._alg_wts_label_ecop_etpy)
 
         if self._sett_obj_nth_ord_diffs_flag:
             print(
-                'wts_label_nth_order:', self._alg_wts_label_nth_order)
+                '\nwts_label_nth_order:\n', self._alg_wts_label_nth_order)
 
         if self._sett_obj_pcorr_flag:
-            print('wts_label_pcorr:', self._alg_wts_label_pcorr)
+            print('\nwts_label_pcorr:\n', self._alg_wts_label_pcorr)
 
         if self._sett_obj_asymm_type_1_ft_flag:
             print(
-                'wts_label_asymm_1_ft:',
+                '\nwts_label_asymm_1_ft:\n',
                 self._alg_wts_label_asymm_1_ft)
 
         if self._sett_obj_asymm_type_2_ft_flag:
             print(
-                'wts_label_asymm_2_ft:',
+                '\nwts_label_asymm_2_ft:\n',
                 self._alg_wts_label_asymm_2_ft)
 
         if self._sett_obj_nth_ord_diffs_ft_flag:
             print(
-                'wts_label_nth_order_ft:',
+                '\nwts_label_nth_order_ft:\n',
                 self._alg_wts_label_nth_order_ft)
 
         if self._sett_obj_etpy_ft_flag:
             print(
-                'wts_label_etpy_ft:',
+                '\nwts_label_etpy_ft:\n',
                 self._alg_wts_label_etpy_ft)
 
         return
@@ -111,8 +111,7 @@ class GTGAlgRealization:
 
         _obj_labs = self._sett_obj_flag_labels[self._sett_obj_flag_vals]
 
-        print('\n')
-        print('Obj. wts.:')
+        print('\nObj. wts.:\n')
         for i in range(len(_obj_labs)):
             print(f'{_obj_labs[i]}: {self._sett_wts_obj_wts[i]:2.2E}')
 

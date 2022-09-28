@@ -30,6 +30,9 @@ class GTGAlgAutoObjWts:
         (wts * means).sum() == means.sum()
         '''
 
+        assert len(self._alg_wts_obj_raw) == self._sett_wts_obj_n_iters, (
+            len(self._alg_wts_obj_raw))
+
         # Max seems to perform better than min and mean.
         means = np.abs(np.array(self._alg_wts_obj_raw)).max(axis=0)
 
