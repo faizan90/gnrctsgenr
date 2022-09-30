@@ -236,6 +236,15 @@ class GTGAlgMisc:
 
         self._get_obj_ftn_val()
 
+        sim_data_sort = np.sort(self._rs.data, axis=0)
+        sim_probs_sort = np.sort(self._rs.probs, axis=0)
+
+        assert np.all(
+            np.isclose(sim_data_sort - self._data_ref_rltzn_srtd, 0.0))
+
+        assert np.all(
+            np.isclose(sim_probs_sort - self._rr.probs_srtd, 0.0))
+
         self._alg_done_opt_flag = False
         self._sett_wts_lags_nths_set_flag = old_lag_nth_wts_flag
         self._sett_wts_label_set_flag = old_label_wts_flag
