@@ -45,6 +45,9 @@ class GTGAlgBase:
         self._alg_wts_label_asymm_2_ft = None
         self._alg_wts_label_nth_order_ft = None
         self._alg_wts_label_etpy_ft = None
+        self._alg_wts_label_cos_sin_dist = None
+        self._alg_wts_label_data_ft = None
+        self._alg_wts_label_probs_ft = None
 
         # Obj wts.
         self._sett_wts_obj_wts = None

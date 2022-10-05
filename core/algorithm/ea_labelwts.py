@@ -143,6 +143,21 @@ class GTGAlgLabelWts:
                 self._data_ref_labels,
                 self._alg_wts_label_etpy_ft)
 
+        if self._sett_obj_cos_sin_dist_flag:
+            self._update_label_wt(
+                self._data_ref_labels,
+                self._alg_wts_label_cos_sin_dist)
+
+        if self._sett_obj_match_data_ft_flag:
+            self._update_label_wt(
+                self._data_ref_labels,
+                self._alg_wts_label_data_ft)
+
+        if self._sett_obj_match_probs_ft_flag:
+            self._update_label_wt(
+                self._data_ref_labels,
+                self._alg_wts_label_probs_ft)
+
         return
 
     def _fill_label_dict(self, labels, label_dict):
@@ -252,6 +267,33 @@ class GTGAlgLabelWts:
             self._fill_label_dict(
                 self._data_ref_labels,
                 self._alg_wts_label_etpy_ft)
+
+            any_obj_ftn = True
+
+        if self._sett_obj_cos_sin_dist_flag:
+            self._alg_wts_label_cos_sin_dist = {}
+
+            self._fill_label_dict(
+                self._data_ref_labels,
+                self._alg_wts_label_cos_sin_dist)
+
+            any_obj_ftn = True
+
+        if self._sett_obj_match_data_ft_flag:
+            self._alg_wts_label_data_ft = {}
+
+            self._fill_label_dict(
+                self._data_ref_labels,
+                self._alg_wts_label_data_ft)
+
+            any_obj_ftn = True
+
+        if self._sett_obj_match_probs_ft_flag:
+            self._alg_wts_label_probs_ft = {}
+
+            self._fill_label_dict(
+                self._data_ref_labels,
+                self._alg_wts_label_probs_ft)
 
             any_obj_ftn = True
 

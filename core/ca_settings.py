@@ -1833,9 +1833,6 @@ class GTGSettings:
                 'implemented for the lumped case only!')
 
         if self._sett_wts_label_set_flag:
-            assert self._sett_obj_use_obj_dist_flag, (
-                'Distribution fitting flag must be True for label weights!')
-
             assert self._data_ref_n_labels > 1, (
                 'More than one label required for label weights!')
 

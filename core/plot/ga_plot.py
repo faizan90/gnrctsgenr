@@ -3,6 +3,8 @@ Created on Nov 15, 2021
 
 @author: Faizan3800X-Uni
 '''
+
+import numpy as np
 import matplotlib as mpl
 # Has to be big enough to accomodate all plotted values.
 mpl.rcParams['agg.path.chunksize'] = 50000
@@ -202,8 +204,8 @@ class GenericTimeSeriesGeneratorPlot:
                 (self._plot_cmpr_ft_corrs, []),
                 (self._plot_cmpr_nth_ord_diffs, []),
                 # (self._plot_mag_cdfs, []),
-                # (self._plot_mag_cos_sin_cdfs_base, (np.cos, 'cos', 'cosine')),
-                # (self._plot_mag_cos_sin_cdfs_base, (np.sin, 'sin', 'sine')),
+                (self._plot_mag_cos_sin_cdfs_base, (np.cos, 'cos', 'cosine')),
+                (self._plot_mag_cos_sin_cdfs_base, (np.sin, 'sin', 'sine')),
                 # (self._plot_ts_probs, []),
                 (self._plot_phs_cdfs, []),
                 (self._plot_cmpr_ecop_scatter, []),

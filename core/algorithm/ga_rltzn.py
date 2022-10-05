@@ -105,6 +105,21 @@ class GTGAlgRealization:
                 '\nwts_label_etpy_ft:\n',
                 self._alg_wts_label_etpy_ft)
 
+        if self._sett_obj_cos_sin_dist_flag:
+            print(
+                '\nwts_label_cos_sin_dist:\n',
+                self._alg_wts_label_cos_sin_dist)
+
+        if self._sett_obj_match_data_ft_flag:
+            print(
+                '\nwts_label_data_ft:\n',
+                self._alg_wts_label_data_ft)
+
+        if self._sett_obj_match_probs_ft_flag:
+            print(
+                '\nwts_label_probs_ft:\n',
+                self._alg_wts_label_probs_ft)
+
         return
 
     def _show_obj_wts(self):

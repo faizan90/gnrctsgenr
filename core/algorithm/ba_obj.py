@@ -28,8 +28,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_scorr[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, lag in enumerate(self._sett_obj_lag_steps):
@@ -149,8 +160,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_asymm_1[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, lag in enumerate(self._sett_obj_lag_steps):
@@ -269,8 +291,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_asymm_2[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, lag in enumerate(self._sett_obj_lag_steps):
@@ -389,8 +422,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_ecop_dens[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, lag in enumerate(self._sett_obj_lag_steps):
@@ -509,8 +553,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_ecop_etpy[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, lag in enumerate(self._sett_obj_lag_steps):
@@ -629,8 +684,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_nth_order[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, nth_ord in enumerate(self._sett_obj_nth_ords):
@@ -748,8 +814,19 @@ class GTGAlgObjective:
 
     def _get_obj_cos_sin_dist_val(self):
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for i, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_cos_sin_dist[label])):
+
+                continue
 
             cos_ftn = self._rr.cos_sin_cdfs_dict[(label, 'cos')]
             sin_ftn = self._rr.cos_sin_cdfs_dict[(label, 'sin')]
@@ -798,8 +875,29 @@ class GTGAlgObjective:
                 sin_sq_diffs = (
                     (sin_ftn.hist - sin_sim_hist) ** self._alg_cnsts_diffs_exp)
 
-            obj_val += cos_sq_diffs.sum() / cos_ftn.sclr
-            obj_val += sin_sq_diffs.sum() / sin_ftn.sclr
+            label_obj_val = 0.0
+            label_obj_val += cos_sq_diffs.sum() / cos_ftn.sclr
+            label_obj_val += sin_sq_diffs.sum() / sin_ftn.sclr
+
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_cos_sin_dist[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_cos_sin_dist[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -814,8 +912,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for j, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_pcorr[label])):
+
+                continue
 
             label_obj_val = 0.0
             for i, lag in enumerate(self._sett_obj_lag_steps):
@@ -1114,9 +1223,43 @@ class GTGAlgObjective:
 
     def _get_obj_data_ft_val(self):
 
-        obj_val = (
-            (self._rr.data_ft - self._rs.data_ft
-             ) ** self._alg_cnsts_diffs_exp).sum()
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
+        obj_val = 0.0
+        for i, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_data_ft[label])):
+
+                continue
+
+            label_obj_val = (
+                (self._rr.data_ft[:, i] - self._rs.data_ft[:, i]
+                 ) ** self._alg_cnsts_diffs_exp).sum()
+
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_data_ft[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_data_ft[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1126,9 +1269,43 @@ class GTGAlgObjective:
 
     def _get_obj_probs_ft_val(self):
 
-        obj_val = (
-            (self._rr.probs_ft - self._rs.probs_ft
-             ) ** self._alg_cnsts_diffs_exp).sum()
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
+        obj_val = 0.0
+        for i, label in enumerate(self._data_ref_labels):
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_probs_ft[label])):
+
+                continue
+
+            label_obj_val = (
+                (self._rr.probs_ft[:, i] - self._rs.probs_ft[:, i]
+                 ) ** self._alg_cnsts_diffs_exp).sum()
+
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_probs_ft[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_probs_ft[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1143,8 +1320,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for label in self._data_ref_labels:
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_asymm_1_ft[label])):
+
+                continue
 
             label_obj_val = 0.0
             for lag in self._sett_obj_lag_steps:
@@ -1214,8 +1402,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for label in self._data_ref_labels:
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_asymm_2_ft[label])):
+
+                continue
 
             label_obj_val = 0.0
             for lag in self._sett_obj_lag_steps:
@@ -1285,8 +1484,19 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for label in self._data_ref_labels:
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_nth_order_ft[label])):
+
+                continue
 
             label_obj_val = 0.0
             for nth_ord in self._sett_obj_nth_ords:
@@ -1393,8 +1603,20 @@ class GTGAlgObjective:
             (self._sett_wts_lags_nths_set_flag) and
             (not self._alg_done_opt_flag))
 
+        cont_flag_02_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (not self._alg_wts_label_search_flag) and
+            (self._sett_wts_label_set_flag) and
+            (not self._alg_done_opt_flag))
+
         obj_val = 0.0
         for label in self._data_ref_labels:
+
+            if (cont_flag_02_prt and
+                (not self._alg_wts_label_etpy_ft[label])):
+
+                continue
+
             label_obj_wt = 0.0
             for lag in self._sett_obj_lag_steps:
 
