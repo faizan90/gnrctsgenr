@@ -1780,9 +1780,6 @@ class GTGSettings:
                 self._sett_obj_nth_ord_diffs_ft_flag]
 
         if self._sett_wts_lags_nths_set_flag:
-            assert self._sett_obj_use_obj_dist_flag, (
-                'Distribution fitting flag must be True for lags\' and '
-                'nths\' weights!')
 
             assert (any(self._sett_wts_lags_obj_flags) or
                     any(self._sett_wts_nths_obj_flags)), (

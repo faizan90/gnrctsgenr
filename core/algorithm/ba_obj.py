@@ -23,23 +23,23 @@ class GTGAlgObjective:
 
     def _get_obj_scorr_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-            obj_val = 0.0
-            for label in self._data_ref_labels:
+            label_obj_val = 0.0
+            for i, lag in enumerate(self._sett_obj_lag_steps):
 
-                label_obj_val = 0.0
-                for lag in self._sett_obj_lag_steps:
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_lag_scorr[(label, lag)])):
 
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_lag_scorr[(label, lag)])):
+                    continue
 
-                        continue
+                if self._sett_obj_use_obj_dist_flag:
 
                     sim_diffs = self._rs.scorr_diffs[(label, lag)]
 
@@ -80,60 +80,61 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum()
 
-                    if self._alg_done_opt_flag:
-                        self._rr.scorr_qq_dict[(label, lag)] = ref_probs
-                        self._rs.scorr_qq_dict[(label, lag)] = sim_probs
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.scorrs[j, i] - self._rs.scorrs[j, i]
+                         ) ** self._alg_cnsts_diffs_exp)
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                if self._alg_done_opt_flag:
+                    self._rr.scorr_qq_dict[(label, lag)] = ref_probs
+                    self._rs.scorr_qq_dict[(label, lag)] = sim_probs
 
-                        wt = self._alg_wts_lag_scorr[(label, lag)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                        self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_lag_scorr[(label, lag)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                    self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_lag_scorr[(label, lag)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_lag_scorr[(label, lag)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_lag_scorr[(label, lag)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_scorr[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_scorr[label].append(
-                        label_obj_val)
+                        self._alg_wts_lag_scorr[(label, lag)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.scorrs - self._rs.scorrs
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_scorr[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_scorr[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -143,22 +144,23 @@ class GTGAlgObjective:
 
     def _get_obj_asymms_1_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            obj_val = 0.0
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-            for label in self._data_ref_labels:
+            label_obj_val = 0.0
+            for i, lag in enumerate(self._sett_obj_lag_steps):
 
-                label_obj_val = 0.0
-                for lag in self._sett_obj_lag_steps:
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_lag_asymm_1[(label, lag)])):
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_lag_asymm_1[(label, lag)])):
 
-                        continue
+                    continue
+
+                if self._sett_obj_use_obj_dist_flag:
 
                     sim_diffs = self._rs.asymm_1_diffs[(label, lag)]
 
@@ -198,60 +200,61 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum()
 
-                    if self._alg_done_opt_flag:
-                        self._rr.asymm_1_qq_dict[(label, lag)] = ref_probs
-                        self._rs.asymm_1_qq_dict[(label, lag)] = sim_probs
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.asymms_1[j, i] - self._rs.asymms_1[j, i]
+                         ) ** self._alg_cnsts_diffs_exp)
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                if self._alg_done_opt_flag:
+                    self._rr.asymm_1_qq_dict[(label, lag)] = ref_probs
+                    self._rs.asymm_1_qq_dict[(label, lag)] = sim_probs
 
-                        wt = self._alg_wts_lag_asymm_1[(label, lag)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                          self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_lag_asymm_1[(label, lag)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                      self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_lag_asymm_1[(label, lag)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_lag_asymm_1[(label, lag)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_lag_asymm_1[(label, lag)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_asymm_1[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_asymm_1[label].append(
-                        label_obj_val)
+                        self._alg_wts_lag_asymm_1[(label, lag)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.asymms_1 - self._rs.asymms_1
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_asymm_1[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_asymm_1[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -261,22 +264,23 @@ class GTGAlgObjective:
 
     def _get_obj_asymms_2_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            obj_val = 0.0
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-            for label in self._data_ref_labels:
+            label_obj_val = 0.0
+            for i, lag in enumerate(self._sett_obj_lag_steps):
 
-                label_obj_val = 0.0
-                for lag in self._sett_obj_lag_steps:
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_lag_asymm_2[(label, lag)])):
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_lag_asymm_2[(label, lag)])):
 
-                        continue
+                    continue
+
+                if self._sett_obj_use_obj_dist_flag:
 
                     sim_diffs = self._rs.asymm_2_diffs[(label, lag)].copy()
 
@@ -316,60 +320,61 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum()
 
-                    if self._alg_done_opt_flag:
-                        self._rr.asymm_2_qq_dict[(label, lag)] = ref_probs
-                        self._rs.asymm_2_qq_dict[(label, lag)] = sim_probs
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.asymms_2[j, i] - self._rs.asymms_2[j, i]
+                         ) ** self._alg_cnsts_diffs_exp)
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                if self._alg_done_opt_flag:
+                    self._rr.asymm_2_qq_dict[(label, lag)] = ref_probs
+                    self._rs.asymm_2_qq_dict[(label, lag)] = sim_probs
 
-                        wt = self._alg_wts_lag_asymm_2[(label, lag)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                          self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_lag_asymm_2[(label, lag)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                      self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_lag_asymm_2[(label, lag)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_lag_asymm_2[(label, lag)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_lag_asymm_2[(label, lag)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_asymm_2[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_asymm_2[label].append(
-                        label_obj_val)
+                        self._alg_wts_lag_asymm_2[(label, lag)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.asymms_2 - self._rs.asymms_2
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_asymm_2[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_asymm_2[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -379,22 +384,23 @@ class GTGAlgObjective:
 
     def _get_obj_ecop_dens_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            obj_val = 0.0
-            for label in self._data_ref_labels:
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-                label_obj_val = 0.0
-                for lag in self._sett_obj_lag_steps:
+            label_obj_val = 0.0
+            for i, lag in enumerate(self._sett_obj_lag_steps):
 
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_lag_ecop_dens[(label, lag)])):
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_lag_ecop_dens[(label, lag)])):
 
-                        continue
+                    continue
+
+                if self._sett_obj_use_obj_dist_flag:
 
                     sim_diffs = self._rs.ecop_dens_diffs[(label, lag)]
 
@@ -434,60 +440,61 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum() / ftn.sclr
 
-                    if self._alg_done_opt_flag:
-                        self._rr.ecop_dens_qq_dict[(label, lag)] = ref_probs
-                        self._rs.ecop_dens_qq_dict[(label, lag)] = sim_probs
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.ecop_dens[j, i] - self._rs.ecop_dens[j, i]
+                         ) ** self._alg_cnsts_diffs_exp).sum()
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                if self._alg_done_opt_flag:
+                    self._rr.ecop_dens_qq_dict[(label, lag)] = ref_probs
+                    self._rs.ecop_dens_qq_dict[(label, lag)] = sim_probs
 
-                        wt = self._alg_wts_lag_ecop_dens[(label, lag)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                        self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_lag_ecop_dens[(label, lag)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                    self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_lag_ecop_dens[(label, lag)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_lag_ecop_dens[(label, lag)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_lag_ecop_dens[(label, lag)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_ecop_dens[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_ecop_dens[label].append(
-                        label_obj_val)
+                        self._alg_wts_lag_ecop_dens[(label, lag)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.ecop_dens - self._rs.ecop_dens
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_ecop_dens[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_ecop_dens[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -497,21 +504,23 @@ class GTGAlgObjective:
 
     def _get_obj_ecop_etpy_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            obj_val = 0.0
-            for label in self._data_ref_labels:
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-                label_obj_val = 0.0
-                for lag in self._sett_obj_lag_steps:
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_lag_ecop_etpy[(label, lag)])):
+            label_obj_val = 0.0
+            for i, lag in enumerate(self._sett_obj_lag_steps):
 
-                        continue
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_lag_ecop_etpy[(label, lag)])):
+
+                    continue
+
+                if self._sett_obj_use_obj_dist_flag:
 
                     sim_diffs = self._rs.ecop_etpy_diffs[(label, lag)]
 
@@ -551,60 +560,61 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum() / ftn.sclr
 
-                    if self._alg_done_opt_flag:
-                        self._rr.ecop_etpy_qq_dict[(label, lag)] = ref_probs
-                        self._rs.ecop_etpy_qq_dict[(label, lag)] = sim_probs
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.ecop_etpy[j, i] - self._rs.ecop_etpy[j, i]
+                         ) ** self._alg_cnsts_diffs_exp)
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                if self._alg_done_opt_flag:
+                    self._rr.ecop_etpy_qq_dict[(label, lag)] = ref_probs
+                    self._rs.ecop_etpy_qq_dict[(label, lag)] = sim_probs
 
-                        wt = self._alg_wts_lag_ecop_etpy[(label, lag)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                        self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_lag_ecop_etpy[(label, lag)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                    self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_lag_ecop_etpy[(label, lag)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_lag_ecop_etpy[(label, lag)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_lag_ecop_etpy[(label, lag)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_ecop_etpy[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_ecop_etpy[label].append(
-                        label_obj_val)
+                        self._alg_wts_lag_ecop_etpy[(label, lag)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.ecop_etpy - self._rs.ecop_etpy
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_ecop_etpy[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_ecop_etpy[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -614,22 +624,23 @@ class GTGAlgObjective:
 
     def _get_obj_nth_ord_diffs_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            obj_val = 0.0
-            for label in self._data_ref_labels:
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-                label_obj_val = 0.0
-                for nth_ord in self._sett_obj_nth_ords:
+            label_obj_val = 0.0
+            for i, nth_ord in enumerate(self._sett_obj_nth_ords):
 
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_nth_order[(label, nth_ord)])):
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_nth_order[(label, nth_ord)])):
 
-                        continue
+                    continue
+
+                if self._sett_obj_use_obj_dist_flag:
 
                     sim_diffs = self._rs.nth_ord_diffs[
                         (label, nth_ord)].copy()
@@ -670,63 +681,64 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum()
 
-                    if self._alg_done_opt_flag:
-                        self._rr.nth_ord_qq_dict[(label, nth_ord)] = (
-                            ref_probs)
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.nths[j, i] - self._rs.nths[j, i]
+                         ) ** self._alg_cnsts_diffs_exp)
 
-                        self._rs.nth_ord_qq_dict[(label, nth_ord)] = (
-                            sim_probs)
+                if self._alg_done_opt_flag:
+                    self._rr.nth_ord_qq_dict[(label, nth_ord)] = (
+                        ref_probs)
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                    self._rs.nth_ord_qq_dict[(label, nth_ord)] = (
+                        sim_probs)
 
-                        wt = self._alg_wts_nth_order[(label, nth_ord)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                        self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_nth_order[(label, nth_ord)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                    self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_nth_order[(label, nth_ord)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_nth_order[(label, nth_ord)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_nth_order[(label, nth_ord)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_nth_order[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_nth_order[label].append(
-                        label_obj_val)
+                        self._alg_wts_nth_order[(label, nth_ord)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.nths - self._rs.nths
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_nth_order[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_nth_order[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -797,22 +809,23 @@ class GTGAlgObjective:
 
     def _get_obj_pcorr_val(self):
 
-        if self._sett_obj_use_obj_dist_flag:
-            cont_flag_01_prt = (
-                (not self._alg_wts_lag_nth_search_flag) and
-                (self._sett_wts_lags_nths_set_flag) and
-                (not self._alg_done_opt_flag))
+        cont_flag_01_prt = (
+            (not self._alg_wts_lag_nth_search_flag) and
+            (self._sett_wts_lags_nths_set_flag) and
+            (not self._alg_done_opt_flag))
 
-            obj_val = 0.0
-            for label in self._data_ref_labels:
+        obj_val = 0.0
+        for j, label in enumerate(self._data_ref_labels):
 
-                label_obj_val = 0.0
-                for lag in self._sett_obj_lag_steps:
-                    if (cont_flag_01_prt and
-                        (not self._alg_wts_lag_pcorr[(label, lag)])):
+            label_obj_val = 0.0
+            for i, lag in enumerate(self._sett_obj_lag_steps):
 
-                        continue
+                if (cont_flag_01_prt and
+                    (not self._alg_wts_lag_pcorr[(label, lag)])):
 
+                    continue
+
+                if self._sett_obj_use_obj_dist_flag:
                     sim_diffs = self._rs.pcorr_diffs[(label, lag)]
 
                     ftn = self._rr.pcorr_diffs_cdfs_dict[(label, lag)]
@@ -851,60 +864,61 @@ class GTGAlgObjective:
 
                     sq_diffs_sum = sq_diffs.sum()
 
-                    if self._alg_done_opt_flag:
-                        self._rr.pcorr_qq_dict[(label, lag)] = ref_probs
-                        self._rs.pcorr_qq_dict[(label, lag)] = sim_probs
+                else:
+                    sq_diffs_sum = (
+                        (self._rr.pcorrs[j, i] - self._rs.pcorrs[j, i]
+                         ) ** self._alg_cnsts_diffs_exp).sum()
 
-                    if ((not self._alg_wts_lag_nth_search_flag) and
-                        (self._sett_wts_lags_nths_set_flag)):
+                if self._alg_done_opt_flag:
+                    self._rr.pcorr_qq_dict[(label, lag)] = ref_probs
+                    self._rs.pcorr_qq_dict[(label, lag)] = sim_probs
 
-                        wt = self._alg_wts_lag_pcorr[(label, lag)]
+                if ((not self._alg_wts_lag_nth_search_flag) and
+                    (self._sett_wts_lags_nths_set_flag)):
 
-                    elif (self._alg_wts_lag_nth_search_flag and
-                        self._sett_wts_lags_nths_set_flag):
+                    wt = self._alg_wts_lag_pcorr[(label, lag)]
 
-                        if self._alg_cnsts_lag_wts_overall_err_flag and (
-                            not self._sett_obj_use_dens_ftn_flag):
+                elif (self._alg_wts_lag_nth_search_flag and
+                    self._sett_wts_lags_nths_set_flag):
 
-                            self._alg_wts_lag_pcorr[(label, lag)].append(
-                                ((ref_probs - sim_probs
-                                  ) ** self._alg_cnsts_diffs_exp).sum())
+                    if (self._alg_cnsts_lag_wts_overall_err_flag and
+                        (not self._sett_obj_use_dens_ftn_flag) and
+                        self._sett_obj_use_obj_dist_flag):
 
-                        else:
-                            self._alg_wts_lag_pcorr[(label, lag)].append(
-                                sq_diffs_sum)
-
-                        wt = 1
+                        self._alg_wts_lag_pcorr[(label, lag)].append(
+                            ((ref_probs - sim_probs
+                              ) ** self._alg_cnsts_diffs_exp).sum())
 
                     else:
-                        wt = 1
-
-                    label_obj_val += sq_diffs_sum * wt
-
-                if ((not self._alg_wts_label_search_flag) and
-                    (self._sett_wts_label_set_flag) and
-                    (not self._alg_wts_lag_nth_search_flag)):
-
-                    wt = self._alg_wts_label_pcorr[label]
-
-                elif (self._alg_wts_label_search_flag and
-                     (self._sett_wts_label_set_flag)  and
-                     (not self._alg_wts_lag_nth_search_flag)):
-
-                    self._alg_wts_label_pcorr[label].append(
-                        label_obj_val)
+                        self._alg_wts_lag_pcorr[(label, lag)].append(
+                            sq_diffs_sum)
 
                     wt = 1
 
                 else:
                     wt = 1
 
-                obj_val += label_obj_val * wt
+                label_obj_val += sq_diffs_sum * wt
 
-        else:
-            obj_val = (
-                (self._rr.pcorrs - self._rs.pcorrs
-                 ) ** self._alg_cnsts_diffs_exp).sum()
+            if ((not self._alg_wts_label_search_flag) and
+                (self._sett_wts_label_set_flag) and
+                (not self._alg_wts_lag_nth_search_flag)):
+
+                wt = self._alg_wts_label_pcorr[label]
+
+            elif (self._alg_wts_label_search_flag and
+                 (self._sett_wts_label_set_flag)  and
+                 (not self._alg_wts_lag_nth_search_flag)):
+
+                self._alg_wts_label_pcorr[label].append(
+                    label_obj_val)
+
+                wt = 1
+
+            else:
+                wt = 1
+
+            obj_val += label_obj_val * wt
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
@@ -1103,10 +1117,6 @@ class GTGAlgObjective:
         obj_val = (
             (self._rr.data_ft - self._rs.data_ft
              ) ** self._alg_cnsts_diffs_exp).sum()
-
-        # obj_val += (
-        #     (np.abs(self._rr.ft[1:,:]) -
-        #      np.abs(self._rs.ft[1:,:])) ** self._alg_cnsts_diffs_exp).sum()
 
         # So that we don't accidentally use it.
         if self._alg_done_opt_flag:
