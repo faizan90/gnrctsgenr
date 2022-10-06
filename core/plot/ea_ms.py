@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import rankdata
 from matplotlib.colors import Normalize
 
-from fcopulas import fill_bi_var_cop_dens
+from fcopulas import fill_bi_var_cop_dens, get_asymms_nd_v2_raw_cy
 
 from .aa_setts import get_mpl_prms, set_mpl_prms
 
@@ -37,6 +37,103 @@ class GTGPlotMultiSite:
 
     def __init__(self):
 
+        return
+
+    def _plot_asymms_nd(self):
+
+        '''
+        Plot N-Dimensional asymmetries.
+        '''
+
+        beg_tm = default_timer()
+
+        h5_hdl = h5py.File(self._plt_in_h5_file, mode='r', driver=None)
+
+        plt_sett = self._plt_sett_ft_corrs
+
+        new_mpl_prms = plt_sett.prms_dict
+
+        old_mpl_prms = get_mpl_prms(new_mpl_prms.keys())
+
+        set_mpl_prms(new_mpl_prms)
+
+        sim_grp_main = h5_hdl['data_sim_rltzns']
+
+        ref_grp = h5_hdl[f'data_ref_rltzn']
+
+        ref_probs = ref_grp['probs'][...].copy(order='c')
+
+        ref_asymms = get_asymms_nd_v2_raw_cy(ref_probs)
+
+        sim_asymmss = {}
+        for rltzn_lab in sim_grp_main:
+
+            sim_asymms = get_asymms_nd_v2_raw_cy(
+                sim_grp_main[f'{rltzn_lab}/probs'][...].copy(order='c'))
+
+            sim_asymmss[rltzn_lab] = sim_asymms
+
+        x_crds = np.arange(ref_probs.shape[1])
+
+        plt.figure()
+        for asymm_idx in range(ref_asymms.shape[0]):
+
+            plt.plot(
+                x_crds,
+                ref_asymms[asymm_idx,:],
+                alpha=plt_sett.alpha_2,
+                color=plt_sett.lc_2,
+                lw=plt_sett.lw_2,
+                label='ref')
+
+            leg_flag = True
+            for rltzn_lab in sim_grp_main:
+                if leg_flag:
+                    label = 'sim'
+
+                else:
+                    label = None
+
+                plt.plot(
+                    x_crds,
+                    sim_asymmss[rltzn_lab][asymm_idx,:],
+                    alpha=plt_sett.alpha_1,
+                    color=plt_sett.lc_1,
+                    lw=plt_sett.lw_1,
+                    label=label)
+
+                leg_flag = False
+
+            plt.grid()
+
+            plt.gca().set_axisbelow(True)
+
+            plt.legend(framealpha=0.7)
+
+            plt.ylabel('Component value (-)')
+
+            plt.xlabel('Component index (-)')
+
+            plt.xticks(x_crds, x_crds)
+
+            out_name = f'ms__nd_asymms_{asymm_idx}.png'
+
+            plt.savefig(str(self._ms_dir / out_name), bbox_inches='tight')
+
+            plt.clf()
+
+        plt.close()
+
+        h5_hdl.close()
+
+        set_mpl_prms(old_mpl_prms)
+
+        end_tm = default_timer()
+
+        if self._vb:
+            print(
+                f'Plotting nD asymmetries '
+                f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 
     def _plot_cross_gnrc_pair_corrs(self, corr_type, lags):

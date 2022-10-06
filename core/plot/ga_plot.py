@@ -264,6 +264,7 @@ class GenericTimeSeriesGeneratorPlot:
                         ('order', [-1, 0, +1])),
                     (self._plot_cross_gnrc_pair_asymms,
                         ('directional', [-1, 0, +1])),
+                    (self._plot_asymms_nd, []),
                     ])
 
             else:
