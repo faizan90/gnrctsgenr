@@ -42,7 +42,7 @@ class GenericTimeSeriesGeneratorPlot:
             print_sl()
 
             print(
-                'Setting inputs for plotting phase annealing results...\n')
+                'Setting inputs for plotting simulation results...\n')
 
         assert isinstance(in_h5_file, (str, Path))
 
@@ -147,7 +147,7 @@ class GenericTimeSeriesGeneratorPlot:
             print_sl()
 
             print(
-                'Setting outputs directory for plotting phase annealing '
+                'Setting outputs directory for plotting simulation '
                 'results...\n')
 
         assert isinstance(outputs_dir, (str, Path))

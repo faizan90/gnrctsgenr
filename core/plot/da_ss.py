@@ -62,7 +62,7 @@ class GTGPlotSingleSite:
 
         sim_grp_main = h5_hdl['data_sim_rltzns']
 
-        cmap_beta = plt.get_cmap('Accent')._resample(3)  # plt.get_cmap(plt.rcParams['image.cmap'])
+        cmap_beta = plt.get_cmap('Accent').resampled(3)  # plt.get_cmap(plt.rcParams['image.cmap'])
 
         cmap_beta.colors[1,:] = [1, 1, 1, 1]
 

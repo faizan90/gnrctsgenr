@@ -316,8 +316,6 @@ class GTGPrepareTfms:
 
         max_comb_size = 2  # self._data_ref_n_labels
 
-        ft_inputs = []
-
         for comb_size in range(2, max_comb_size + 1):
             combs = combinations(self._data_ref_labels, comb_size)
 
@@ -363,8 +361,6 @@ class GTGPrepareTfms:
 
                 else:
                     raise NotImplementedError
-
-                ft_inputs.append(ft_input)
 
                 ft = np.fft.rfft(ft_input)
                 mag_spec = np.abs(ft)
