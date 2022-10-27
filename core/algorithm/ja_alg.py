@@ -189,8 +189,6 @@ class GTGAlgorithm:
 
             self._reset_timers()
 
-            self._gen_ref_aux_data()
-
             if self._vb:
                 with self._lock:
                     print(
