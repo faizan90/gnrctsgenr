@@ -132,7 +132,7 @@ class GTGPlotMultiSite:
 
         if self._vb:
             print(
-                f'Plotting nD asymmetries '
+                f'Plotting multi-site nD asymmetries '
                 f'took {end_tm - beg_tm:0.2f} seconds.')
         return
 

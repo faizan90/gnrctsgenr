@@ -47,7 +47,7 @@ class GTGAlgAutoObjWts:
 
         wts = np.array(wts)
 
-        assert np.all(np.isfinite(wts))
+        assert np.all(np.isfinite(wts)), wts
 
         wts = (wts.size * wts) / wts.sum()
 
@@ -57,7 +57,8 @@ class GTGAlgAutoObjWts:
 
         wts *= wts_sclr
 
-        assert np.isclose((wts * means).sum(), means.sum())
+        assert np.isclose((wts * means).sum(), means.sum()), (
+            wts, means)
 
         wts = sci_round(wts)
 
